@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">iBake</string>
+    <string name="tambah">Pilih Gambar Untuk Menambahkan</string>
+
+    <string name="itemNama1">Cinnamon Bread</string>
+    <string name="itemNama2">Baguette Bread</string>
+    <string name="itemNama3">Multiseed Bread</string>
+    <string name="itemNama4">Focaccia Bread</string>
+    <string name="itemNama5">Walnut Raisin Bread</string>
+    <string name="itemNama6">Wholemeal Bread</string>
+
+    <string name="desc">desc</string>
+    <string name="desc1">"Lebih baik dari Cinnamon Roll! Lebih panjang dan enak dengan gula kristal di atasnya.\n\nKomposisi : Telur, Mentega, Tepung, Gula, Ragi, Susu &amp; Gula Kayu Manis."</string>
+    <string name="desc2">"Kerak renyah dari roti asli Prancis. Iris dan sajikan dengan minyak zaitun, garam, dan lada hitam yang baru digiling untuk dicelupkan.\n\nKomposisi : Tepung Roti, Durum, &amp; Garam."</string>
+    <string name="desc3">"Sumber nutrisi tinggi serat harian Anda dengan banyak biji, seperti biji labu, biji bunga matahari, wijen hitam, wijen putih dengan kombinasi serpihan oat dan serpihan coklat.\n\nKomposisi : Wijen Hitam, Brown Flakes, Tepung Roti, Oat Flakes, Ragi Alami, Biji Labu, Garam, Biji Bunga Matahari, Wijen Putih &amp; Tepung Terigu."</string>
+    <string name="desc4">"Perpaduan dari basic mix yang mirip gaya dan teksturnya seperti adonan pizza, ditambah dengan aroma khas rosemary, rempah-rempah peterseli dan topping keju emmental menciptakan kombinasi sempurna di mulut Anda.\n\nKomposisi : Gandum, Tepung Roti, Tepung Terigu, Ragi, Garam, Minyak Zaitun, Campuran Herba, Peterseli &amp; Keju Emmental."</string>
+    <string name="desc5">Tendangan kacang yang luar biasa dari kenari dan kismis bulat manis di setiap gigitan yang dibuat oleh resep asli mitra kami, Baru Dipanggang oleh Le Bijoux, Singapura\n\nFakta Gizi : 2 iris (+-90g) Kalori 205 kalKarbohidrat 140g, Lemak 2.4g, Protein 5.6g, Kolesterol 0mg, Serat Makanan 4.2g, Gula 0g, Sodium 324mg</string>
+    <string name="desc6">"Roti rendah kalori tanpa gula, tanpa telur, dan tanpa susu. Wholemeal mengandung lebih banyak vitamin dan mineral dan aman bagi penderita diabetes.\n\nKomposisi : Tepung Roti, Ragi Alami, Garam, Oat Flakes &amp; Tepung Terigu."</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
