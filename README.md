@@ -4,7 +4,7 @@ Nama      : Daniel Kristian Jatmiko<br />
 NIM       : A11.2021.13429<br />
 Kelompok  : A11.4308<br />
 
-![Alt Text](https://github.com/NoxiousST/iBake/blob/master/Demo/LoginRegister.gif)<br />
-![Alt Text](https://github.com/NoxiousST/iBake/blob/master/Demo/Dashboard_AdobeExpress.gif)<br />
-<img src="https://github.com/NoxiousST/iBake/blob/master/Demo/Desc_AdobeExpress.gif" width="50"/><br />
-![Alt Text](https://github.com/NoxiousST/iBake/blob/master/Demo/Menu_AdobeExpress.gif)
+<img src="https://github.com/NoxiousST/iBake/blob/master/Demo/LoginRegister.gif" width="350"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="https://github.com/NoxiousST/iBake/blob/master/Demo/Dashboard_AdobeExpress.gif" width="350"/><br />
+<img src="https://github.com/NoxiousST/iBake/blob/master/Demo/Desc_AdobeExpress.gif" width="350"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="https://github.com/NoxiousST/iBake/blob/master/Demo/Menu_AdobeExpress.gif" width="350"/><br />
