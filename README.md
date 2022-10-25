@@ -6,5 +6,5 @@ Kelompok  : A11.4308<br />
 
 ![Alt Text](https://github.com/NoxiousST/iBake/blob/master/Demo/LoginRegister.gif)<br />
 ![Alt Text](https://github.com/NoxiousST/iBake/blob/master/Demo/Dashboard_AdobeExpress.gif)<br />
-<img src="https://github.com/NoxiousST/iBake/blob/master/Demo/Desc_AdobeExpress.gif" width="250"/><br />
+<img src="https://github.com/NoxiousST/iBake/blob/master/Demo/Desc_AdobeExpress.gif" width="50"/><br />
 ![Alt Text](https://github.com/NoxiousST/iBake/blob/master/Demo/Menu_AdobeExpress.gif)
