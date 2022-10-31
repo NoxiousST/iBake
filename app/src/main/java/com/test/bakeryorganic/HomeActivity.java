@@ -139,14 +139,16 @@ public class HomeActivity extends AppCompatActivity implements OnItemClick {
         public void onReceive(Context context, Intent intent) {
             broadcasted = true;
             tinydb.putBoolean("broadcast", true);
-            totalInt = 0;
 
+            totalInt = 0;
             getPosition = intent.getIntExtra("pos", 0);
             isClear = intent.getBooleanExtra("isempty", false);
+
             myListNama.remove(getPosition);
             myListHarga.remove(getPosition);
             myListGambar.remove(getPosition);
             myListCount.remove(getPosition);
+            if(myListNama.isEmpty()) tinydb.putBoolean("isclear", true);
 
             for (Integer i : myListHarga)
                 totalInt += i;

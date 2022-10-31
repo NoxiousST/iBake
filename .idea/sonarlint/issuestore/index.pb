@@ -29,3 +29,7 @@ d
 4app/src/main/java/com/test/bakeryorganic/TinyDB.java,0\4\04bfc56ce086d2a452caefeeaf0d2b6a15555c7b
 m
 =app/src/main/java/com/test/bakeryorganic/RecyclerPayment.java,e\c\ec38cc4a2108ec975a2f46f20f485caa066a1924
+l
+<app/src/main/java/com/test/bakeryorganic/UpdateActivity.java,1\b\1bdc07d94aebed216730976a1935cb5573b9738a
+\
+,.idea/inspectionProfiles/Project_Default.xml,4\9\496a238a6afa168dbaf6efd37bb459331589579c
