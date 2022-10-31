@@ -1,7 +1,6 @@
 package com.test.bakeryorganic;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -14,10 +13,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Objects;
+
 public class LoginActivity extends AppCompatActivity {
 
-    private TextInputEditText text2;
     private TextInputLayout mViewUser, mViewPassword;
+    TextInputEditText text2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +26,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         Window w = getWindow();
         w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         mViewUser=findViewById(R.id.et_emailSignin);
         mViewPassword =findViewById(R.id.et_passwordSignin);
@@ -58,8 +59,8 @@ public class LoginActivity extends AppCompatActivity {
         View fokus = null;
         boolean cancel = false;
 
-        String user = String.valueOf(mViewUser.getEditText().getText());
-        String password = String.valueOf(mViewPassword.getEditText().getText());
+        String user = String.valueOf(Objects.requireNonNull(mViewUser.getEditText()).getText());
+        String password = String.valueOf(Objects.requireNonNull(mViewPassword.getEditText()).getText());
 
         if (TextUtils.isEmpty(user)){
             mViewUser.setError("This field is required");

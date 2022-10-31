@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,8 +26,7 @@ public class MainActivity extends AppCompatActivity {
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
-        getSupportActionBar().hide();
-
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         new Handler().postDelayed(() -> {
             Intent login = new Intent(MainActivity.this, LoginActivity.class);

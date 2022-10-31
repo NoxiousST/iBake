@@ -1,48 +1,54 @@
 package com.test.bakeryorganic;
 
 import android.content.Context;
-
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
+
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 
 import androidx.annotation.NonNull;
 
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.daasuu.ei.Ease;
-import com.daasuu.ei.EasingInterpolator;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Currency;
+import java.util.Calendar;
+import java.util.Locale;
+
+import com.daasuu.ei.Ease;
+import com.daasuu.ei.EasingInterpolator;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.RecyclerViewHolder> {
 
+    private static final Locale locale = new Locale("id", "ID");
     private final ArrayList<RecyclerData> courseDataArrayList;
     private final Context mcontext;
-    private OnItemClick mCallback;
-
-    int hargaTemp = 0, numberFlt;
-    int gambar;
-    String numberStr, nama, harga, total;
-
-    MaterialAlertDialogBuilder materialAlertDialogBuilder;
+    private long startClickTime;
+    private static final int MAX_CLICK_DURATION = 500;
+    int harga;
+    int gambar, count;
     View customAlertDialogView;
+    String nama;
     TextView namaDlg, hargaDlg, description;
     ImageView gambarDlg;
-    Animation anim;
-    NumberFormat format;
-
+    Animation maskin, maskout;
+    OnItemClick mCallback;
+    MaterialAlertDialogBuilder materialAlertDialogBuilder;
+    NumberFormat format = NumberFormat.getCurrencyInstance(locale);
+    ArrayList<Integer> pos = new ArrayList<>();
+    boolean isPos;
 
 
     public RecyclerViewAdapter(ArrayList<RecyclerData> recyclerDataArrayList, Context mcontext, OnItemClick listener) {
@@ -61,30 +67,68 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
 
+        format.setMaximumFractionDigits(0);
+
         RecyclerData recyclerData = courseDataArrayList.get(position);
         holder.namaTV.setText(recyclerData.getTitle());
-        holder.hargaTV.setText(recyclerData.getHarga());
+        holder.hargaTV.setText(format.format(recyclerData.getHarga()));
         holder.gambarIV.setImageResource(recyclerData.getImgid());
 
-        holder.gambarIV.setOnClickListener(v -> {
-            anim = AnimationUtils.loadAnimation(mcontext, R.anim.item_click);
-            anim.setInterpolator(new EasingInterpolator(Ease.QUINT_IN_OUT));
-            holder.cardView.startAnimation(anim);
 
-            numberStr = holder.hargaTV.getText().toString().replaceAll("[^0-9]", "");
-            numberFlt = Integer.parseInt(numberStr);
-            hargaTemp += numberFlt;
+        holder.gambarIV.setOnTouchListener((v, event) -> {
+            maskin = AnimationUtils.loadAnimation(mcontext, R.anim.maskin);
+            maskout = AnimationUtils.loadAnimation(mcontext, R.anim.maskout);
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    holder.cardView.setScaleX((float) 0.95);
+                    holder.cardView.setScaleY((float) 0.95);
+                    startClickTime = Calendar.getInstance().getTimeInMillis();
+                    break;
 
-            format = NumberFormat.getCurrencyInstance();
-            format.setMaximumFractionDigits(0);
-            format.setCurrency(Currency.getInstance("IDR"));
+                case MotionEvent.ACTION_UP:
+                    long clickDuration = Calendar.getInstance().getTimeInMillis() - startClickTime;
 
-            total = format.format(hargaTemp);
-            nama = holder.namaTV.getText().toString();
-            harga = format.format(numberFlt);
-            gambar = recyclerData.getImgid();
-            mCallback.onClickImage(total, nama, harga, gambar);
+                    isPos = !pos.contains(position);
 
+                    holder.cardView.setScaleX(1);
+                    holder.cardView.setScaleY(1);
+
+                    if (clickDuration < MAX_CLICK_DURATION && isPos) {
+
+                        maskin.setInterpolator(new EasingInterpolator(Ease.QUINT_OUT));
+                        holder.relative.setVisibility(View.VISIBLE);
+                        holder.relative.startAnimation(maskin);
+                        pos.add(position);
+                        Log.d("ArrayList", pos + " Added, Size : " + pos.size());
+
+                        nama = recyclerData.getTitle();
+                        harga = recyclerData.getHarga();
+                        gambar = recyclerData.getImgid();
+                        count = recyclerData.getCount() + 1;
+                        mCallback.onClickImage(nama, harga * count, gambar, count);
+
+                        new Handler().postDelayed(() -> {
+                            pos.remove(0);
+                            Log.d("ArrayList", pos + " Index Removed, Size : " + pos.size());
+                        }, 1700);
+
+                    }
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    holder.cardView.setScaleX(1);
+                    holder.cardView.setScaleY(1);
+                    break;
+            }
+
+            maskin.setAnimationListener(new Animation.AnimationListener() {
+                @Override public void onAnimationStart(Animation animation) {}
+                @Override public void onAnimationRepeat(Animation animation) {}
+                @Override public void onAnimationEnd(Animation animation) {
+                    maskout.setInterpolator(new EasingInterpolator(Ease.QUINT_IN));
+                    holder.relative.startAnimation(maskout);
+                }
+            });
+            return true;
         });
 
         holder.texts.setOnClickListener(view -> {
@@ -95,30 +139,27 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             gambarDlg = customAlertDialogView.findViewById(R.id.gambarDialog);
             description = customAlertDialogView.findViewById(R.id.description);
 
-            namaDlg.setText(holder.namaTV.getText().toString());
-            hargaDlg.setText(holder.hargaTV.getText().toString());
+            namaDlg.setText(recyclerData.getTitle());
+            hargaDlg.setText(format.format(recyclerData.getHarga()));
             gambarDlg.setImageResource(recyclerData.getImgid());
-            description.setText(R.string.desc+position+1);
+            description.setText(R.string.desc + position + 1);
 
             materialAlertDialogBuilder.setView(customAlertDialogView)
-                    .setPositiveButton("OK", (dialogInterface, i) -> {})
-
+                    .setPositiveButton("OK", (dialogInterface, i) -> {
+                    })
                     .show();
         });
-
     }
 
     @Override
-    public int getItemCount() {
-        return courseDataArrayList.size();
-    }
+    public int getItemCount() {return courseDataArrayList.size();}
 
     public static class RecyclerViewHolder extends RecyclerView.ViewHolder {
-
         private final TextView namaTV, hargaTV;
         private final ImageView gambarIV;
-        private final CardView cardView;
+        private final MaterialCardView cardView;
         private final LinearLayout texts;
+        private final RelativeLayout relative;
 
         public RecyclerViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -127,8 +168,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             gambarIV = itemView.findViewById(R.id.gambar);
             texts = itemView.findViewById(R.id.texts);
             cardView = itemView.findViewById(R.id.cardView);
-
+            relative = itemView.findViewById(R.id.relative);
         }
     }
-
 }

@@ -23,7 +23,6 @@ public class RevealAnimation {
         mView = view;
         mActivity = activity;
 
-        //when you're android version is at leat Lollipop it starts the reveal activity
         if (intent.hasExtra(EXTRA_CIRCULAR_REVEAL_X) && intent.hasExtra(EXTRA_CIRCULAR_REVEAL_Y)) {
             view.setVisibility(View.INVISIBLE);
 
@@ -40,22 +39,16 @@ public class RevealAnimation {
                     }
                 });
             }
-        } else {
-
-            //if you are below android 5 it jist shows the activity
-            view.setVisibility(View.VISIBLE);
-        }
+        } else {view.setVisibility(View.VISIBLE);}
     }
 
     public void revealActivity(int x, int y) {
         float finalRadius = (float) (Math.max(mView.getWidth(), mView.getHeight()) * 1.1);
 
-        // create the animator for this view (the start radius is zero)
         Animator circularReveal = ViewAnimationUtils.createCircularReveal(mView, x, y, 0, finalRadius);
         circularReveal.setDuration(500);
         circularReveal.setInterpolator(new AccelerateInterpolator());
 
-        // make the view visible and start the animation
         mView.setVisibility(View.VISIBLE);
         circularReveal.start();
     }
@@ -74,7 +67,6 @@ public class RevealAnimation {
                 mActivity.overridePendingTransition(0, 0);
             }
         });
-
         circularReveal.start();
     }
 }

@@ -4,12 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Point;
@@ -20,37 +21,49 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Currency;
+import java.util.Calendar;
 import java.util.Locale;
-
 
 public class PaymentActivity extends AppCompatActivity implements OnItemChange {
 
-    private RecyclerView recyclerView;
-    private ArrayList<RecyclerPayment> recyclerDataArrayList;
-    TextView vsubtotal, vongkir, vtotal;
+    private static final Locale locale = new Locale("id", "ID");
+    private ArrayList<RecyclerPayment> recyclerPaymentArrayList;
+
+    RecyclerView recyclerView;
+    TextView total, ongkir, fullTotal, vkembali;
     PaymentViewAdapter adapter;
-    String st;
-    ArrayList<String> myListNama, myListHarga;
-    ArrayList<Integer> myListGambar;
+    ArrayList<String> myListNama;
+    ArrayList<Integer> myListHarga, myListGambar, myListCount;
     GridLayoutManager layoutManager;
     ExtendedFloatingActionButton checkout;
     NestedScrollView touch;
-    NumberFormat format = NumberFormat.getCurrencyInstance();
-    Intent dIntent = new Intent("delete"), cIntent = new Intent("clear");;
+    EditText saldo;
+    NumberFormat format = NumberFormat.getCurrencyInstance(locale);
+    Intent clr = new Intent("clear");
+    Intent dlt = new Intent("delete");
+    Intent inc = new Intent("change");
+    Intent pass = new Intent("pass");
+    Intent callIntent, smsIntent, mapIntent, updIntent;
+    RecyclerPayment deletedItem;
+    String swipeNama;
+    BigDecimal value;
+    TinyDB tinydb;
 
-    int x1, x2, x3, x4, x5, x6, y;
-    int[] arr, icount;
-    int ong = 20000, t = 0, zero = 0, tx, ty;
-    int sub, hrg, sldHarga, x;
+    int jumlahOngkir = 20000, zero = 0;
+    int sub = 0, kembali = 0, tx, ty, getTotal, swipePosition, swipeGambar;
+    int[] location;
+    private static final int MAX_CLICK_DURATION = 500;
+    private long startClickTime;
+    boolean isChecked;
+    double typeSaldo = 0, setKembali = 0;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -58,111 +71,122 @@ public class PaymentActivity extends AppCompatActivity implements OnItemChange {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
         ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("Pembayaran");
-        vsubtotal = findViewById(R.id.vsubtotal);
-        vongkir = findViewById(R.id.vongkir);
-        vtotal = findViewById(R.id.vtotal);
+        total = findViewById(R.id.vsubtotal);
+        ongkir = findViewById(R.id.vongkir);
+        fullTotal = findViewById(R.id.vtotal);
         recyclerView = findViewById(R.id.idCourseRV);
         checkout = findViewById(R.id.checkout);
         touch = findViewById(R.id.relative);
-        myListNama = getIntent().getStringArrayListExtra("mylistnama");
-        myListHarga = getIntent().getStringArrayListExtra("mylistharga");
-        myListGambar = getIntent().getIntegerArrayListExtra("mylistgambar");
+        saldo = findViewById(R.id.vsaldo);
+        vkembali = findViewById(R.id.vkembali);
+        tinydb = new TinyDB(this);
 
+        myListNama = getIntent().getStringArrayListExtra("mylistnama");
+        myListHarga = getIntent().getIntegerArrayListExtra("mylistharga");
+        myListGambar = getIntent().getIntegerArrayListExtra("mylistgambar");
+        myListCount = getIntent().getIntegerArrayListExtra("mylistcount");
 
         format.setMaximumFractionDigits(0);
-        format.setCurrency(Currency.getInstance("IDR"));
 
-        st = getIntent().getStringExtra("subt");
-        vsubtotal.setText(st);
-        vongkir.setText(format.format(ong));
-        t = Integer.parseInt(st.replaceAll("[^0-9]", "")) + ong;
-        vtotal.setText(format.format(t));
+        getTotal = getIntent().getIntExtra("totalInt", 0);
+        total.setText(format.format(getTotal));
+        ongkir.setText(format.format(jumlahOngkir));
+        fullTotal.setText(format.format((long) getTotal + jumlahOngkir));
 
-        x1 = getIntent().getIntExtra("x1", 0);
-        x2 = getIntent().getIntExtra("x2", 0);
-        x3 = getIntent().getIntExtra("x3", 0);
-        x4 = getIntent().getIntExtra("x4", 0);
-        x5 = getIntent().getIntExtra("x5", 0);
-        x6 = getIntent().getIntExtra("x6", 0);
-
-        int n = myListNama.size();
-        arr = new int[n];
-
-        for (int i = 0; i < n; i++) {
-            if (myListNama.contains(getResources().getString(R.string.itemNama1)))
-                arr[myListNama.indexOf(getResources().getString(R.string.itemNama1))] = x1;
-            if (myListNama.contains(getResources().getString(R.string.itemNama2)))
-                arr[myListNama.indexOf(getResources().getString(R.string.itemNama2))] = x2;
-            if (myListNama.contains(getResources().getString(R.string.itemNama3)))
-                arr[myListNama.indexOf(getResources().getString(R.string.itemNama3))] = x3;
-            if (myListNama.contains(getResources().getString(R.string.itemNama4)))
-                arr[myListNama.indexOf(getResources().getString(R.string.itemNama4))] = x4;
-            if (myListNama.contains(getResources().getString(R.string.itemNama5)))
-                arr[myListNama.indexOf(getResources().getString(R.string.itemNama5))] = x5;
-            if (myListNama.contains(getResources().getString(R.string.itemNama6)))
-                arr[myListNama.indexOf(getResources().getString(R.string.itemNama6))] = x6;
-        }
-
-
-        recyclerDataArrayList = new ArrayList<>();
+        recyclerPaymentArrayList = new ArrayList<>();
         for (int i = 0; i < myListNama.size(); i++) {
-            recyclerDataArrayList.add(new RecyclerPayment(myListNama.get(i), myListHarga.get(i), myListGambar.get(i), arr[i]));
+            recyclerPaymentArrayList.add(new RecyclerPayment(myListNama.get(i), myListHarga.get(i), myListGambar.get(i), myListCount.get(i)));
         }
 
-        adapter = new PaymentViewAdapter(recyclerDataArrayList, this, this);
         layoutManager = new GridLayoutManager(this, 1);
         recyclerView.setLayoutManager(layoutManager);
+        adapter = new PaymentViewAdapter(recyclerPaymentArrayList, this, this);
         recyclerView.setAdapter(adapter);
-        checkout.setEnabled(true);
-        checkout.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_DOWN){
-                startRevealActivity(v, event.getX()+tx, event.getY()+ty);
-            }
-            new Handler().postDelayed(() -> {
-                recyclerDataArrayList.clear();
-                LocalBroadcastManager.getInstance(this).sendBroadcast(cIntent);
-                finish();
-            },700);
 
+        checkout.setEnabled(false);
+        checkout.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    startClickTime = Calendar.getInstance().getTimeInMillis();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    long clickDuration = Calendar.getInstance().getTimeInMillis() - startClickTime;
+                    if (clickDuration < MAX_CLICK_DURATION) {
+                        startRevealActivity(event.getX() + tx, event.getY() + ty);
+                        for (Integer i : myListHarga)
+                            kembali += i;
+                        tinydb.putDouble("saldokembali", typeSaldo - (kembali + jumlahOngkir));
+                        tinydb.putBoolean("ischeckout", true);
+                        kembali = 0;
+                        new Handler().postDelayed(() -> {
+                            recyclerPaymentArrayList.clear();
+                            LocalBroadcastManager.getInstance(this).sendBroadcast(clr);
+                            finish();
+                        }, 700);
+
+                        break;
+                    }
+            }
             return true;
         });
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
             @Override
-            public boolean onMove(RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return true;
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                swipePosition = viewHolder.getLayoutPosition();
+                deletedItem = recyclerPaymentArrayList.get(swipePosition);
+                swipeNama = deletedItem.getTitle();
+                swipeGambar = deletedItem.getImgid();
 
-                int position = viewHolder.getLayoutPosition();
-                RecyclerPayment deletedItem = recyclerDataArrayList.get(position);
-
-                x = Integer.parseInt(deletedItem.getHarga());
-                y = deletedItem.getItemCount();
-
-                sub = Integer.parseInt(vsubtotal.getText().toString().replaceAll("[^0-9]", ""));
-                sub -= x*y;
-                vsubtotal.setText(format.format(sub));
-                sub += 20000;
-                vtotal.setText(format.format(sub));
-
-                onDelete(position);
-
+                onIncDecClick(swipePosition, swipeNama, 0, swipeGambar, 0);
             }
-
         }).attachToRecyclerView(recyclerView);
 
-
+        saldo.addTextChangedListener(new MoneyTextWatcher(saldo) {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!recyclerPaymentArrayList.isEmpty()) {
+                    value = MoneyTextWatcher.parseCurrencyValue(saldo.getText().toString());
+                    typeSaldo = value.doubleValue();
+                    saldoKembali();
+                }
+            }
+        });
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        tinydb.putDouble("typesaldo", typeSaldo);
 
+        pass.putStringArrayListExtra("passnama", myListNama);
+        pass.putIntegerArrayListExtra("passharga", myListHarga);
+        pass.putIntegerArrayListExtra("passgambar", myListGambar);
+        pass.putIntegerArrayListExtra("passcount", myListCount);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(pass);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isChecked = tinydb.getBoolean("ischeckout");
+
+        if (isChecked) {setKembali = tinydb.getDouble("saldokembali");isChecked = false;}
+        else {setKembali = tinydb.getDouble("typesaldo");}
+
+        saldo.setText(format.format(setKembali));
+    }
 
     private Point getPointOfView(View view) {
-        int[] location = new int[2];
+        location = new int[2];
         view.getLocationInWindow(location);
         return new Point(location[0], location[1]);
     }
@@ -177,70 +201,72 @@ public class PaymentActivity extends AppCompatActivity implements OnItemChange {
 
     @Override
     public void onDelete(int pos) {
-        recyclerDataArrayList.remove(pos);
+        saldoKembali();
+        myListNama.remove(pos);
+        myListHarga.remove(pos);
+        myListGambar.remove(pos);
+        myListCount.remove(pos);
+        recyclerPaymentArrayList.remove(pos);
         adapter.notifyItemRemoved(pos);
-        adapter.notifyItemRangeChanged(pos, recyclerDataArrayList.size());
+        adapter.notifyItemRangeChanged(pos, recyclerPaymentArrayList.size());
+        dlt.putExtra("pos", pos);
 
-        if (recyclerDataArrayList.isEmpty()) {
-
+        if (recyclerPaymentArrayList.isEmpty()) {
             format.setMaximumFractionDigits(0);
-            format.setCurrency(Currency.getInstance("IDR"));
 
-            vongkir.setText(format.format(zero));
-            vtotal.setText(format.format(zero));
-            recyclerDataArrayList.clear();
+            total.setText(format.format(zero));
+            ongkir.setText(format.format(zero));
+            fullTotal.setText(format.format(zero));
+            vkembali.setText("-");
             checkout.setEnabled(false);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(cIntent);
-        } else {
-            dIntent.putExtra("pos", pos);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(dIntent);
-        }
+            dlt.putExtra("isempty", true);
+        } else dlt.putExtra("isempty", false);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(dlt);
     }
 
     @Override
-    public void onIncDecClick(int pos, int count, String nama, String harga, String status, int gambar) {
+    public void onIncDecClick(int pos, String nama, int harga, int gambar, int count) {
+        myListHarga.set(pos, harga);
+        myListCount.set(pos, count);
 
-        String scount = String.valueOf(count);
-        sldHarga = Integer.parseInt(harga.replaceAll("[^0-9]", ""));
+        for (Integer i : myListHarga) sub += i;
 
-        hrg = Integer.parseInt(harga);
-        sub = Integer.parseInt(vsubtotal.getText().toString().replaceAll("[^0-9]", ""));
+        getTotal = 0;
+        total.setText(format.format(sub));
+        fullTotal.setText(format.format((long) sub + jumlahOngkir));
 
-        if (status.equals("plus")) {sub += hrg;}
-        else if (status.equals("minus")) {sub -= hrg;}
-
-        format.setMaximumFractionDigits(0);
-        format.setCurrency(Currency.getInstance("IDR"));
-
-        vsubtotal.setText(format.format(sub));
-        sub += 20000;
-        vtotal.setText(format.format(sub));
-
-
-        if (count == 0) onDelete(pos);
-        else {
-            recyclerDataArrayList.set(pos, new RecyclerPayment(nama, harga, gambar, count));
+        if (count > 0) {
+            inc.putExtra("pos", pos);
+            inc.putExtra("harga", harga);
+            inc.putExtra("count", count);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(inc);
+            recyclerPaymentArrayList.set(pos, new RecyclerPayment(nama, harga, gambar, count));
             adapter.notifyItemChanged(pos);
-            Intent intent = new Intent("increment");
-            intent.putExtra("count", scount);
-            intent.putExtra("nama", nama);
-            intent.putExtra("harga", harga);
-            intent.putExtra("status", status);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }
-
-
-
-
-
-
+        saldoKembali();
+        if (count <= 0) {onDelete(pos);}
+        sub = 0;
     }
 
+    public void saldoKembali() {
+        for (Integer i : myListHarga) kembali += i;
+
+        if (typeSaldo >= kembali + jumlahOngkir) {
+            vkembali.setText(format.format(typeSaldo - (kembali + jumlahOngkir)));
+            checkout.setEnabled(true);
+        }
+        else {
+            vkembali.setText("-");
+            checkout.setEnabled(false);
+        }
+        kembali = 0;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         if (menu instanceof MenuBuilder) {
             MenuBuilder m = (MenuBuilder) menu;
-            //noinspection RestrictedApi
             m.setOptionalIconsVisible(true);
         }
         return true;
@@ -249,61 +275,45 @@ public class PaymentActivity extends AppCompatActivity implements OnItemChange {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                return true;
             case R.id.call:
-                Toast.makeText(this, "Call Center is Selected", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:0123456789"));
-                startActivity(intent);
+                callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(Uri.parse("tel:0123456789"));
+                startActivity(callIntent);
                 return true;
             case R.id.msg:
-                Toast.makeText(this, "SMS Center is Selected", Toast.LENGTH_SHORT).show();
-                Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+                smsIntent = new Intent(Intent.ACTION_SENDTO);
                 smsIntent.setData(Uri.parse("smsto:0123456789"));
                 smsIntent.putExtra("sms_body", "");
                 startActivity(smsIntent);
-            return true;
+                return true;
             case R.id.map:
-                Toast.makeText(this, "Lokasi/Map is Selected", Toast.LENGTH_SHORT).show();
                 String uri = String.format(Locale.ENGLISH, "geo:%f,%f", -7.4007514414175715, 110.68323302612266);
-                Intent phoneIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                startActivity(phoneIntent);
+                mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                startActivity(mapIntent);
                 return true;
             case R.id.upd:
-                Intent i = new Intent(PaymentActivity.this, UpdateActivity.class);
-                startActivity(i);
+                updIntent = new Intent(PaymentActivity.this, UpdateActivity.class);
+                startActivity(updIntent);
                 return true;
             case R.id.logout:
                 Preferences.clearLoggedInUser(getBaseContext());
                 startActivity(new Intent(getBaseContext(), LoginActivity.class));
                 finish();
                 return true;
-
         }
         return (super.onOptionsItemSelected(item));
     }
 
-    private void startRevealActivity(View v, float x, float y) {
-        //calculates the center of the View v you are passing
-
+    private void startRevealActivity(float x, float y) {
         int xc = (int) x;
         int yc = (int) y;
 
-
-        //create an intent, that launches the second activity and pass the x and y coordinates
         Intent intent = new Intent(this, CheckoutActivity.class);
         intent.putExtra(RevealAnimation.EXTRA_CIRCULAR_REVEAL_X, xc);
         intent.putExtra(RevealAnimation.EXTRA_CIRCULAR_REVEAL_Y, yc);
 
-        //just start the activity as an shared transition, but set the options bundle to null
-        ActivityCompat.startActivity(this, intent, null);
+        ContextCompat.startActivity(this, intent, null);
 
-        //to prevent strange behaviours override the pending transitions
         overridePendingTransition(0, 0);
     }
-
-
-
 }

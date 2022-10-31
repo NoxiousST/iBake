@@ -4,10 +4,10 @@
     style="?attr/materialCardViewElevatedStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+    android:layout_marginHorizontal="16dp"
     android:layout_marginBottom="16dp"
     app:cardCornerRadius="8dp"
-    app:cardElevation="18dp">
+    app:cardElevation="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"

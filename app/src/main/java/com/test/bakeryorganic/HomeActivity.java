@@ -2,228 +2,263 @@ package com.test.bakeryorganic;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.Gravity;
-import android.widget.LinearLayout.LayoutParams;
-
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.GridLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity implements OnItemClick {
 
-    private RecyclerView recyclerView;
-    private ArrayList<RecyclerData> recyclerDataArrayList;
+    private static final Locale locale = new Locale("id", "ID");
+    ArrayList<RecyclerData> recyclerDataArrayList;
+    RecyclerView recyclerView;
     TextView total;
-    public Intent i;
+    Intent intent, callIntent, smsIntent, mapIntent, updIntent;
     ArrayList<String> myListNama = new ArrayList<>();
-    ArrayList<String> myListHarga = new ArrayList<>();
+    ArrayList<Integer> myListHarga = new ArrayList<>();
     ArrayList<Integer> myListGambar = new ArrayList<>();
-    int x1 = 1;
-    int x2 = 1;
-    int x3 = 1;
-    int x4 = 1;
-    int x5 = 1;
-    int x6 = 1;
-    int h = 0, tots = 0, x = 0, tot = 0;
-    String status = "", strHarga;
+    ArrayList<Integer> myListCount = new ArrayList<>();
+    RecyclerViewAdapter adapter;
+    ActionBar actionBar;
+    String getMap;
+    TinyDB tinydb;
+    int getTotalHarga, getCount, getPosition;
+    int totalInt = 0;
+    boolean broadcasted = false, isClear, dataPassed;
 
+    NumberFormat format = NumberFormat.getCurrencyInstance(locale);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Dashboard");
-        recyclerView = findViewById(R.id.idCourseRV);
-        total = findViewById(R.id.total);
 
-        i = new Intent(HomeActivity.this, PaymentActivity.class);
+        actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setTitle("Dashboard");
+
+        recyclerView = findViewById(R.id.itemRV);
+        total = findViewById(R.id.total);
+        tinydb = new TinyDB(this);
+        intent = new Intent(HomeActivity.this, PaymentActivity.class);
 
         recyclerDataArrayList = new ArrayList<>();
-        recyclerDataArrayList.add(new RecyclerData(getResources().getString(R.string.itemNama1), "20000", R.drawable.cinnamonbread));
-        recyclerDataArrayList.add(new RecyclerData(getResources().getString(R.string.itemNama2), "25000", R.drawable.baguettebread));
-        recyclerDataArrayList.add(new RecyclerData(getResources().getString(R.string.itemNama3), "30000", R.drawable.multiseedbread));
-        recyclerDataArrayList.add(new RecyclerData(getResources().getString(R.string.itemNama4), "35000", R.drawable.focacciabread));
-        recyclerDataArrayList.add(new RecyclerData(getResources().getString(R.string.itemNama5), "33500", R.drawable.walnutraisinbread));
-        recyclerDataArrayList.add(new RecyclerData(getResources().getString(R.string.itemNama6), "45000", R.drawable.wholemealbread));
+        recyclerDataArrayList.add(new RecyclerData(getResources().getString(R.string.itemNama1), 20000, R.drawable.cinnamonbread, 0));
+        recyclerDataArrayList.add(new RecyclerData(getResources().getString(R.string.itemNama2), 25000, R.drawable.baguettebread, 0));
+        recyclerDataArrayList.add(new RecyclerData(getResources().getString(R.string.itemNama3), 30000, R.drawable.multiseedbread, 0));
+        recyclerDataArrayList.add(new RecyclerData(getResources().getString(R.string.itemNama4), 35000, R.drawable.focacciabread, 0));
+        recyclerDataArrayList.add(new RecyclerData(getResources().getString(R.string.itemNama5), 33500, R.drawable.walnutraisinbread, 0));
+        recyclerDataArrayList.add(new RecyclerData(getResources().getString(R.string.itemNama6), 45000, R.drawable.wholemealbread, 0));
 
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(recyclerDataArrayList, this, this);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
-
-        recyclerView.setLayoutManager(layoutManager);
+        adapter = new RecyclerViewAdapter(recyclerDataArrayList, this, this);
         recyclerView.setAdapter(adapter);
-        LocalBroadcastManager.getInstance(this).registerReceiver(iMessageReceiver, new IntentFilter("increment"));
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(iMessageReceiver, new IntentFilter("change"));
         LocalBroadcastManager.getInstance(this).registerReceiver(dMessageReceiver, new IntentFilter("delete"));
         LocalBroadcastManager.getInstance(this).registerReceiver(cMessageReceiver, new IntentFilter("clear"));
-
-        recyclerView.setOnClickListener(view -> {
-
-        });
-
-        if (total.getText().toString().equals(getResources().getString(R.string.tambah)))
-            total.setEnabled(false);
-
-        total.setOnClickListener(view -> {
-
-            startActivity(i);
-        });
-
+        LocalBroadcastManager.getInstance(this).registerReceiver(pMessageReceiver, new IntentFilter("pass"));
+        total.setOnClickListener(view -> startActivity(intent));
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (totalInt == 0)
+            tinydb.putBoolean("isclear", true);
+        tinydb.putListString("mylistnama", myListNama);
+        tinydb.putListInt("mylistharga", myListHarga);
+        tinydb.putListInt("mylistgambar", myListGambar);
+        tinydb.putListInt("mylistcount", myListCount);
+        broadcasted = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        totalInt = 0;
+        broadcasted = tinydb.getBoolean("broadcast");
+        dataPassed = tinydb.getBoolean("getpass");
+        isClear = tinydb.getBoolean("isclear");
+
+        if (isClear) {
+            setClear();
+            isClear = false;
+        }
+        else if (!broadcasted) {
+            myListNama = tinydb.getListString("mylistnama");
+            myListHarga = tinydb.getListInt("mylistharga");
+            myListGambar = tinydb.getListInt("mylistgambar");
+            myListCount = tinydb.getListInt("mylistcount");
+            retrieveTotal();
+        } else if (dataPassed) {
+            myListNama = tinydb.getListString("getpassnama");
+            myListHarga = tinydb.getListInt("getpassharga");
+            myListGambar = tinydb.getListInt("getpassgambar");
+            myListCount = tinydb.getListInt("getpasscount");
+            dataPassed = false;
+            retrieveTotal();
+        }
+    }
+
+    private final BroadcastReceiver pMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            dataPassed = true;
+            tinydb.putListString("getpassnama", intent.getStringArrayListExtra("passnama"));
+            tinydb.putListInt("getpassharga", intent.getIntegerArrayListExtra("passharga"));
+            tinydb.putListInt("getpassgambar", intent.getIntegerArrayListExtra("passgambar"));
+            tinydb.putListInt("getpasscount", intent.getIntegerArrayListExtra("passcount"));
+            tinydb.putBoolean("getpass", dataPassed);
+        }
+    };
 
     private final BroadcastReceiver cMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            myListNama.clear();
-            myListHarga.clear();
-            myListGambar.clear();
-            x1 = 1;
-            x2 = 1;
-            x3 = 1;
-            x4 = 1;
-            x5 = 1;
-            x6 = 1;
-            total.setText(R.string.tambah);
-            total.setEnabled(false);
+            tinydb.putBoolean("isclear", true);
+            setClear();
         }
     };
+
     private final BroadcastReceiver dMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int pos = intent.getIntExtra("pos", 0);
-            myListNama.remove(pos);
-            myListHarga.remove(pos);
-            myListGambar.remove(pos);
-            if (pos == 0) x1 = 1;
-            else if (pos == 1) x2 = 1;
-            else if (pos == 2) x3 = 1;
-            else if (pos == 3) x4 = 1;
-            else if (pos == 4) x5 = 1;
-            else if (pos == 5) x6 = 1;
+            broadcasted = true;
+            tinydb.putBoolean("broadcast", true);
+            totalInt = 0;
+
+            getPosition = intent.getIntExtra("pos", 0);
+            isClear = intent.getBooleanExtra("isempty", false);
+            myListNama.remove(getPosition);
+            myListHarga.remove(getPosition);
+            myListGambar.remove(getPosition);
+            myListCount.remove(getPosition);
+
+            for (Integer i : myListHarga)
+                totalInt += i;
+            format.setMaximumFractionDigits(0);
+            total.setText(format.format(totalInt));
         }
     };
 
     private final BroadcastReceiver iMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String count = intent.getStringExtra("count");
-            String nama = intent.getStringExtra("nama");
-            String harga = intent.getStringExtra("harga");
-            status = intent.getStringExtra("status");
-            int icount = Integer.parseInt(count);
+            broadcasted = true;
+            tinydb.putBoolean("broadcast", true);
+            totalInt = 0;
 
-            int hrg = Integer.parseInt(harga);
-            if (!total.getText().toString().equals(getResources().getString(R.string.tambah))) {
-                tot = Integer.parseInt(total.getText().toString().replaceAll("[^0-9]", ""));
-            }
+            getPosition = intent.getIntExtra("pos", 0);
+            getTotalHarga = intent.getIntExtra("harga", 0);
+            getCount = intent.getIntExtra("count", 0);
 
-            NumberFormat format = NumberFormat.getCurrencyInstance();
-            format.setMaximumFractionDigits(0);
-            format.setCurrency(Currency.getInstance("IDR"));
+            if (myListCount.get(getPosition) > getCount) {totalInt += getTotalHarga/getCount;}
+            else if (myListCount.get(getPosition) < getCount) {totalInt -= getTotalHarga/getCount;}
+            myListHarga.set(getPosition, getTotalHarga);
+            myListCount.set(getPosition, getCount);
 
-            if (status.equals("plus")) {
-                tots = tot + hrg / (icount - 1);
-                total.setText(format.format(tots));
-            } else if (status.equals("minus")) {
-                tots = tot - hrg / (icount + 1);
-                if (tots == 0) {
-                    total.setText(R.string.tambah);
-                    total.setEnabled(false);
-                } else {
-                    total.setText(format.format(tots));
-                }
-            }
-            i.putExtra("subt", format.format(tots));
-
-            if (nama.equals(getResources().getString(R.string.itemNama1)) && icount > 0) {
-                x1 = icount;
-            } else if (nama.equals(getResources().getString(R.string.itemNama2)) && icount > 0) {
-                x2 = icount;
-            } else if (nama.equals(getResources().getString(R.string.itemNama3)) && icount > 0) {
-                x3 = icount;
-            } else if (nama.equals(getResources().getString(R.string.itemNama4)) && icount > 0) {
-                x4 = icount;
-            } else if (nama.equals(getResources().getString(R.string.itemNama5)) && icount > 0) {
-                x5 = icount;
-            } else if (nama.equals(getResources().getString(R.string.itemNama6)) && icount > 0) {
-                x6 = icount;
-            }
-            i.putExtra("x1", x1);
-            i.putExtra("x2", x2);
-            i.putExtra("x3", x3);
-            i.putExtra("x4", x4);
-            i.putExtra("x5", x5);
-            i.putExtra("x6", x6);
+            total.setText(format.format(totalInt));
         }
     };
 
+    @Override
+    public void onClickImage(String nama, int harga, int gambar, int count) {
+        total.setEnabled(true);
+        totalInt = 0;
 
+        if (!myListNama.contains(nama)) {
+            myListNama.add(nama);
+            myListHarga.add(harga);
+            myListGambar.add(gambar);
+            myListCount.add(1);
+        } else {
+            myListCount.set(myListNama.indexOf(nama), myListCount.get(myListNama.indexOf(nama))+1);
+            myListHarga.set(myListNama.indexOf(nama), harga * myListCount.get(myListNama.indexOf(nama)));
+        }
+
+        broadcasted = false;
+        tinydb.putBoolean("broadcast", false);
+        tinydb.putBoolean("isclear", false);
+        retrieveTotal();
+    }
+
+    public void retrieveTotal() {
+        for (Integer i : myListHarga)
+            totalInt += i;
+
+        if (!isClear) {
+            format.setMaximumFractionDigits(0);
+            total.setText(format.format(totalInt));
+        }
+        isClear = false;
+        intent.putExtra("mylistnama", myListNama);
+        intent.putExtra("mylistharga", myListHarga);
+        intent.putExtra("mylistgambar", myListGambar);
+        intent.putExtra("mylistcount", myListCount);
+        intent.putExtra("totalInt", totalInt);
+    }
+
+    public void setClear() {
+        isClear = true;
+        tinydb.putBoolean("broadcast", true);
+        broadcasted = true;
+        myListNama.clear();
+        myListHarga.clear();
+        myListGambar.clear();
+        myListCount.clear();
+
+        total.setText(R.string.tambah);
+        total.setEnabled(false);
+    }
+
+    @Override
+    @SuppressLint("RestrictedApi")
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         if (menu instanceof MenuBuilder) {
             MenuBuilder m = (MenuBuilder) menu;
-            //noinspection RestrictedApi
             m.setOptionalIconsVisible(true);
         }
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.call:
-                Toast.makeText(this, "Call Center is Selected", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:0123456789"));
-                startActivity(intent);
+                callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(Uri.parse("tel:0123456789"));
+                startActivity(callIntent);
                 return true;
             case R.id.msg:
-                Toast.makeText(this, "SMS Center is Selected", Toast.LENGTH_SHORT).show();
-                Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+                smsIntent = new Intent(Intent.ACTION_SENDTO);
                 smsIntent.setData(Uri.parse("smsto:0123456789"));
-                smsIntent.putExtra("sms_body", "");
+                smsIntent.putExtra("sms_body", "Hello There");
                 startActivity(smsIntent);
                 return true;
             case R.id.map:
-                Toast.makeText(this, "Lokasi/Map is Selected", Toast.LENGTH_SHORT).show();
-                String uri = String.format(Locale.ENGLISH, "geo:%f,%f", -7.4007514414175715, 110.68323302612266);
-                Intent phoneIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                startActivity(phoneIntent);
+                getMap = String.format(Locale.ENGLISH, "geo:%f,%f", -7.4007514414175715, 110.68323302612266);
+                mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getMap));
+                startActivity(mapIntent);
                 return true;
             case R.id.upd:
-                Intent i = new Intent(HomeActivity.this, UpdateActivity.class);
-                startActivity(i);
+                updIntent = new Intent(HomeActivity.this, UpdateActivity.class);
+                startActivity(updIntent);
                 return true;
             case R.id.logout:
                 Preferences.clearLoggedInUser(getBaseContext());
@@ -234,60 +269,6 @@ public class HomeActivity extends AppCompatActivity implements OnItemClick {
         return (super.onOptionsItemSelected(item));
     }
 
-    @Override
-    public void onClickImage(String sum, String nama, String harga, int gambar) {
-        total.setEnabled(true);
-
-
-        strHarga = harga.replaceAll("[^0-9]", "");
-        h = Integer.parseInt(strHarga);
-
-        if (total.getText().toString().equals(getResources().getString(R.string.tambah))) x = h + 0;
-        else {
-            tot = Integer.parseInt(total.getText().toString().replaceAll("[^0-9]", ""));
-            x = h + tot;
-        }
-
-        NumberFormat format = NumberFormat.getCurrencyInstance();
-        format.setMaximumFractionDigits(0);
-        format.setCurrency(Currency.getInstance("IDR"));
-
-        total.setText(format.format(x));
-
-        if (!myListNama.contains(nama)) {
-            myListNama.add(nama);
-            myListHarga.add(strHarga);
-            myListGambar.add(gambar);
-
-        } else {
-            if (nama.equals(getResources().getString(R.string.itemNama1))) {
-                x1++;
-            } else if (nama.equals(getResources().getString(R.string.itemNama2))) {
-                x2++;
-            } else if (nama.equals(getResources().getString(R.string.itemNama3))) {
-                x3++;
-            } else if (nama.equals(getResources().getString(R.string.itemNama4))) {
-                x4++;
-            } else if (nama.equals(getResources().getString(R.string.itemNama5))) {
-                x5++;
-            } else if (nama.equals(getResources().getString(R.string.itemNama6))) {
-                x6++;
-            }
-        }
-
-        i.putExtra("mylistnama", myListNama);
-        i.putExtra("mylistharga", myListHarga);
-        i.putExtra("mylistgambar", myListGambar);
-        if (x1 > 0) i.putExtra("x1", x1);
-        if (x2 > 0) i.putExtra("x2", x2);
-        if (x3 > 0) i.putExtra("x3", x3);
-        if (x4 > 0) i.putExtra("x4", x4);
-        if (x5 > 0) i.putExtra("x5", x5);
-        if (x6 > 0) i.putExtra("x6", x6);
-        i.putExtra("subt", format.format(x));
-
-
-    }
 
 
 }

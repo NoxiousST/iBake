@@ -36,20 +36,6 @@ public class Preferences {
     }
 
 
-
-    public static void updateRegisteredUser(Context context, String username){
-        SharedPreferences.Editor editor = getSharedPreference(context).edit();
-        editor.putString(KEY_USER_TEREGISTER, username);
-        editor.apply();
-    }
-
-    public static void updateRegisteredPass(Context context, String password){
-        SharedPreferences.Editor editor = getSharedPreference(context).edit();
-        editor.putString(KEY_PASS_TEREGISTER, password);
-        editor.apply();
-    }
-
-
     public static void setLoggedInUser(Context context, String username){
         SharedPreferences.Editor editor = getSharedPreference(context).edit();
         editor.putString(KEY_USERNAME_SEDANG_LOGIN, username);
@@ -61,17 +47,12 @@ public class Preferences {
         editor.apply();
     }
 
-
-
     public static String getLoggedInUser(Context context){
         return getSharedPreference(context).getString(KEY_USERNAME_SEDANG_LOGIN,"");
     }
     public static String getLoggedInPass(Context context){
         return getSharedPreference(context).getString(KEY_PASSWORD_SEDANG_LOGIN,"");
     }
-
-
-
 
     public static void setLoggedInStatus(Context context, boolean status){
         SharedPreferences.Editor editor = getSharedPreference(context).edit();

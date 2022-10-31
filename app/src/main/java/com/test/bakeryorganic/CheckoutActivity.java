@@ -2,7 +2,6 @@ package com.test.bakeryorganic;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-
 import android.content.Intent;
 
 import android.os.Bundle;
@@ -25,20 +24,15 @@ public class CheckoutActivity extends AppCompatActivity {
         Window w = getWindow();
         w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
+        Intent intent = this.getIntent();
 
-        Intent intent = this.getIntent();   //get the intent to recieve the x and y coords, that you passed before
-
-        LinearLayout rootLayout = findViewById(R.id.root_layout); //there you have to get the root layout of your second activity
+        LinearLayout rootLayout = findViewById(R.id.root_layout);
         mRevealAnimation = new RevealAnimation(rootLayout, intent, this);
-        new Handler().postDelayed(() -> {
-            mRevealAnimation.unRevealActivity();
-        },5000);
+        new Handler().postDelayed(() -> mRevealAnimation.unRevealActivity(),5000);
     }
 
     @Override
     public void onBackPressed() {
         if (shouldAllowBack) super.onBackPressed();
-
     }
-
 }

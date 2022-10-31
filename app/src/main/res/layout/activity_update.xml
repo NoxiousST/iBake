@@ -7,8 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginVertical="16dp"
+
         android:orientation="vertical">
 
         <com.google.android.material.card.MaterialCardView
@@ -16,8 +15,8 @@
             style="?attr/materialCardViewElevatedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginVertical="16dp"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginVertical="32dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="18dp">
 
@@ -93,8 +92,8 @@
             style="?attr/materialCardViewElevatedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginVertical="16dp"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginVertical="32dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="18dp">
 

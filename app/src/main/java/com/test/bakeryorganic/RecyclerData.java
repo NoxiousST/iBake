@@ -1,33 +1,28 @@
 package com.test.bakeryorganic;
 
-
-import java.text.NumberFormat;
-import java.util.Currency;
-
 public class RecyclerData {
 
-    private String title, hrg;
-    private int imgid;
+    private final String title;
+    private final int hrg, imgid, count;
 
     public String getTitle() {
         return title;
     }
 
-    public String getHarga() {
-        NumberFormat format = NumberFormat.getCurrencyInstance();
-        format.setMaximumFractionDigits(0);
-        format.setCurrency(Currency.getInstance("IDR"));
-        hrg = format.format(Float.parseFloat(hrg));
-        return hrg;
-    }
+    public int getHarga() {return hrg;}
 
     public int getImgid() {
         return imgid;
     }
 
-    public RecyclerData(String title, String hrg, int imgid) {
+    public int getCount() {
+        return count;
+    }
+
+    public RecyclerData(String title, int hrg, int imgid, int count) {
         this.title = title;
         this.hrg = hrg;
         this.imgid = imgid;
+        this.count = count;
     }
 }

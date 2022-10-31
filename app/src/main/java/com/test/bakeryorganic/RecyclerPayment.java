@@ -1,20 +1,15 @@
 package com.test.bakeryorganic;
 
-import java.text.NumberFormat;
-import java.util.Currency;
-
 public class RecyclerPayment {
 
-    private String title, hrg;
-    private int imgid, itemCount;
+    private final String title;
+    private final int hrg, imgid, itemCount;
 
     public String getTitle() {
         return title;
     }
 
-    public String getHarga() {
-        return hrg;
-    }
+    public int getHarga() {return hrg;}
 
     public int getImgid() {
         return imgid;
@@ -24,7 +19,7 @@ public class RecyclerPayment {
         return itemCount;
     }
 
-    public RecyclerPayment(String title, String hrg, int imgid, int itemCount) {
+    public RecyclerPayment(String title, int hrg, int imgid, int itemCount) {
         this.title = title;
         this.hrg = hrg;
         this.imgid = imgid;

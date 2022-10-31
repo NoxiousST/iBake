@@ -12,10 +12,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Objects;
+
 public class RegisterActivity extends AppCompatActivity {
 
     private TextInputLayout mViewUser, mViewPassword, mViewRepassword;
-    private TextInputEditText text3;
+    TextInputEditText text3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +25,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         Window w = getWindow();
         w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         mViewUser =findViewById(R.id.et_emailSignup);
         mViewPassword =findViewById(R.id.et_passwordSignup);
@@ -49,9 +51,9 @@ public class RegisterActivity extends AppCompatActivity {
         View fokus = null;
         boolean cancel = false;
 
-        String repassword = String.valueOf(mViewRepassword.getEditText().getText());
-        String user = String.valueOf(mViewUser.getEditText().getText());
-        String password = String.valueOf(mViewPassword.getEditText().getText());
+        String repassword = String.valueOf(Objects.requireNonNull(mViewRepassword.getEditText()).getText());
+        String user = String.valueOf(Objects.requireNonNull(mViewUser.getEditText()).getText());
+        String password = String.valueOf(Objects.requireNonNull(mViewPassword.getEditText()).getText());
 
         if (TextUtils.isEmpty(user)){
             mViewUser.setError("This field is required");

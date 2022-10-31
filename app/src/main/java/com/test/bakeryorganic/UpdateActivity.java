@@ -21,6 +21,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 
 import java.util.Locale;
+import java.util.Objects;
 
 public class UpdateActivity extends AppCompatActivity {
 
@@ -33,6 +34,7 @@ public class UpdateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update);
         ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setTitle("Update Profile");
         actionBar.setDisplayHomeAsUpEnabled(true);
         updUser = findViewById(R.id.updUser);
@@ -52,7 +54,7 @@ public class UpdateActivity extends AppCompatActivity {
             View fokus = null;
             boolean cancel = false;
 
-            String user = String.valueOf(updUser.getEditText().getText());
+            String user = String.valueOf(Objects.requireNonNull(updUser.getEditText()).getText());
 
             if (TextUtils.isEmpty(user)){
                 updUser.setError("This field is required");
@@ -67,12 +69,11 @@ public class UpdateActivity extends AppCompatActivity {
                 fokus.requestFocus();
             }else{
                 Preferences.setLoggedInUser(getBaseContext(),user);
-                Preferences.updateRegisteredUser(getBaseContext(),user);
+                Preferences.setRegisteredUser(getBaseContext(),user);
                 Snackbar.make(view, "Username berhasil diupdate", Snackbar.LENGTH_LONG)
                         .setAction("OK", v ->{})
                         .show();
             }
-
         });
 
         rstBtn.setOnClickListener(view -> {
@@ -82,9 +83,9 @@ public class UpdateActivity extends AppCompatActivity {
             View fokus = null;
             boolean cancel = false;
 
-            String cur_password = String.valueOf(updCurPass.getEditText().getText());
-            String new_password = String.valueOf(updNewPass1.getEditText().getText());
-            String new_repassword = String.valueOf(updNewPass2.getEditText().getText());
+            String cur_password = String.valueOf(Objects.requireNonNull(updCurPass.getEditText()).getText());
+            String new_password = String.valueOf(Objects.requireNonNull(updNewPass1.getEditText()).getText());
+            String new_repassword = String.valueOf(Objects.requireNonNull(updNewPass2.getEditText()).getText());
 
             if (TextUtils.isEmpty(cur_password)){
                 updCurPass.setError("This field is required");
@@ -109,15 +110,12 @@ public class UpdateActivity extends AppCompatActivity {
                 fokus.requestFocus();
             }else{
                 Preferences.setLoggedInPass(getBaseContext(),new_password);
-                Preferences.updateRegisteredPass(getBaseContext(),new_password);
+                Preferences.setRegisteredUser(getBaseContext(),new_password);
                 Snackbar.make(view, "Password berhasil diupdate", Snackbar.LENGTH_LONG)
                         .setAction("OK", v ->{})
                         .show();
-
             }
-
         });
-
     }
 
     private boolean cekPassword(String password, String repassword){
@@ -128,11 +126,11 @@ public class UpdateActivity extends AppCompatActivity {
         return user.equals(Preferences.getRegisteredUser(getBaseContext()));
     }
 
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         if (menu instanceof MenuBuilder) {
             MenuBuilder m = (MenuBuilder) menu;
-            //noinspection RestrictedApi
             m.setOptionalIconsVisible(true);
         }
         return true;
@@ -145,26 +143,22 @@ public class UpdateActivity extends AppCompatActivity {
                 this.finish();
                 return true;
             case R.id.call:
-                Toast.makeText(this, "Call Center is Selected", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(Intent.ACTION_DIAL);
                 intent.setData(Uri.parse("tel:0123456789"));
                 startActivity(intent);
                 return true;
             case R.id.msg:
-                Toast.makeText(this, "SMS Center is Selected", Toast.LENGTH_SHORT).show();
                 Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
                 smsIntent.setData(Uri.parse("smsto:0123456789"));
                 smsIntent.putExtra("sms_body", "");
                 startActivity(smsIntent);
                 return true;
             case R.id.map:
-                Toast.makeText(this, "Lokasi/Map is Selected", Toast.LENGTH_SHORT).show();
                 String uri = String.format(Locale.ENGLISH, "geo:%f,%f", -7.4007514414175715, 110.68323302612266);
                 Intent phoneIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                 startActivity(phoneIntent);
                 return true;
             case R.id.upd:
-                Toast.makeText(this, Preferences.getLoggedInUser(getBaseContext()) + " " + Preferences.getRegisteredPass(getBaseContext()), Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.logout:
                 Preferences.clearLoggedInUser(getBaseContext());

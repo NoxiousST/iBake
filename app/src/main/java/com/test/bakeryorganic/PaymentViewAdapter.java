@@ -1,35 +1,32 @@
 package com.test.bakeryorganic;
 
 import android.content.Context;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Currency;
+import java.util.Locale;
 
 public class PaymentViewAdapter extends RecyclerView.Adapter<PaymentViewAdapter.ViewHolder> {
 
-    private final ArrayList<RecyclerPayment> courseDataArrayList;
-    private final Context mcontext;
-    private OnItemChange mCallback;
-    int incCount, decCount, stNumberInt;
-    int incNumberFlt, decNumberFlt, incHarga, decHarga;
-    String status, incTotal, decTotal, incNumberStr, decNumberStr, stNumberStr, s;
-    NumberFormat format = NumberFormat.getCurrencyInstance();
-
+    private static final Locale locale = new Locale("id", "ID");
+    private final ArrayList<RecyclerPayment> itemDataArrayList;
+    private final OnItemChange mCallback;
+    final Context mcontext;
+    int incHarga, decHarga, harga;
+    int count;
+    NumberFormat format = NumberFormat.getCurrencyInstance(locale);
 
     public PaymentViewAdapter(ArrayList<RecyclerPayment> recyclerDataArrayList, Context mcontext, OnItemChange listener) {
-        this.courseDataArrayList = recyclerDataArrayList;
+        this.itemDataArrayList = recyclerDataArrayList;
         this.mcontext = mcontext;
         this.mCallback = listener;
     }
@@ -44,63 +41,39 @@ public class PaymentViewAdapter extends RecyclerView.Adapter<PaymentViewAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        RecyclerPayment recyclerData = courseDataArrayList.get(position);
+        format.setMaximumFractionDigits(0);
 
+        RecyclerPayment recyclerData = itemDataArrayList.get(position);
         holder.namaPay.setText(recyclerData.getTitle());
-        holder.hargaPay.setText(recyclerData.getHarga());
+        holder.hargaPay.setText(format.format(recyclerData.getHarga()));
         holder.gambarPay.setImageResource(recyclerData.getImgid());
         holder.itemCount.setText(String.valueOf(recyclerData.getItemCount()));
 
-        stNumberStr = holder.hargaPay.getText().toString().replaceAll("[^0-9]", "");
-        stNumberInt = Integer.parseInt(stNumberStr) * recyclerData.getItemCount();
-        format.setMaximumFractionDigits(0);
-        format.setCurrency(Currency.getInstance("IDR"));
-        s = format.format(stNumberInt);
-        holder.hargaPay.setText(s);
-
         holder.incr.setOnClickListener(view -> {
-            incNumberStr = holder.hargaPay.getText().toString().replaceAll("[^0-9]", "");
-            incCount = Integer.parseInt(holder.itemCount.getText().toString());
-            status = "plus";
+            harga = recyclerData.getHarga();
+            count = recyclerData.getItemCount();
 
-            incCount++;
-            incNumberFlt = Integer.parseInt(incNumberStr);
-            incHarga = incNumberFlt / (incCount-1);
+            incHarga = harga + (harga/count);
+            count++;
 
-            format.setMaximumFractionDigits(0);
-            format.setCurrency(Currency.getInstance("IDR"));
-            incTotal = format.format(incNumberFlt + incHarga);
-
-            holder.hargaPay.setText(incTotal);
-            holder.itemCount.setText(String.valueOf(incCount));
-            mCallback.onIncDecClick(position, incCount, holder.namaPay.getText().toString(), String.valueOf(incHarga), status, recyclerData.getImgid());
+            mCallback.onIncDecClick(position, recyclerData.getTitle(), incHarga, recyclerData.getImgid(), count);
         });
 
         holder.decr.setOnClickListener(view -> {
-            decNumberStr = holder.hargaPay.getText().toString().replaceAll("[^0-9]", "");
-            decCount = Integer.parseInt(holder.itemCount.getText().toString());
-            status = "minus";
+            harga = recyclerData.getHarga();
+            count = recyclerData.getItemCount();
 
-            decCount--;
-            decNumberFlt = Integer.parseInt(decNumberStr);
-            decHarga = decNumberFlt / (decCount+1);
+            decHarga = harga - (harga/count);
+            count--;
 
-            format.setMaximumFractionDigits(0);
-            format.setCurrency(Currency.getInstance("IDR"));
-            decTotal = format.format(decNumberFlt - decHarga);
-
-            holder.hargaPay.setText(decTotal);
-            holder.itemCount.setText(String.valueOf(decCount));
-
-            mCallback.onIncDecClick(position, decCount, holder.namaPay.getText().toString(), String.valueOf(decHarga), status, recyclerData.getImgid());
-
+            mCallback.onIncDecClick(position, recyclerData.getTitle(), decHarga, recyclerData.getImgid(), count);
         });
 
     }
 
     @Override
     public int getItemCount() {
-        return courseDataArrayList.size();
+        return itemDataArrayList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
