@@ -1,0 +1,46 @@
+
+u
+java:S2293Ï"YReplace the type specification in this constructor call with the diamond operator ("<>").(û»Åİùÿÿÿÿ
+p
+java:S2293Ğ"YReplace the type specification in this constructor call with the diamond operator ("<>").(àçºÆ
+u
+java:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(û»Åİùÿÿÿÿ
+u
+java:S2293‚"YReplace the type specification in this constructor call with the diamond operator ("<>").(ìãµ°ùÿÿÿÿ
+u
+java:S2293‘"YReplace the type specification in this constructor call with the diamond operator ("<>").(û»Åİùÿÿÿÿ
+u
+java:S2293’"YReplace the type specification in this constructor call with the diamond operator ("<>").(ŞÔ‘³üÿÿÿÿ
+u
+java:S2293©"YReplace the type specification in this constructor call with the diamond operator ("<>").(œ¡ÜÃùÿÿÿÿ
+u
+java:S2293¼"YReplace the type specification in this constructor call with the diamond operator ("<>").(Ëÿ¡ïùÿÿÿÿ
+p
+java:S2293Î"YReplace the type specification in this constructor call with the diamond operator ("<>").(æ±Ä
+p
+java:S2293Ô"YReplace the type specification in this constructor call with the diamond operator ("<>").(‰«×õ
+p
+java:S2293ï"YReplace the type specification in this constructor call with the diamond operator ("<>").(™ƒ¿ç
+E
+java:S1066"/Merge this if statement with the enclosing one.(ºó¢Š
+K
+java:S1066™"/Merge this if statement with the enclosing one.(Îšôşÿÿÿÿ
+A
+java:S5411×"*Use the primitive boolean expression here.(¸è×¨
+Š
+java:S4165ª"nRemove this useless assignment; "bitmapCompressed" already holds the assigned value along all execution paths.(ÖÙûŠüÿÿÿÿ
+	java:S1160"jRename this field "DEFAULT_APP_IMAGEDATA_DIRECTORY" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Şß´Ô
+H
+java:S1135D"2Complete the task associated to this TODO comment.(‡ñÅ¼
+j
+java:S4042™"NUse "java.nio.file.Files#delete" here for better messages on error conditions.(Îšôşÿÿÿÿ
+F
+java:S2093¤"*Change this "try" to a try-with-resources.(¡»¢üùÿÿÿÿ
+Y
+java:S1126¿"BReplace this if-then-else statement by a single method invocation.(¥ŞŠ²
+e
+java:S4042„"NUse "java.nio.file.Files#delete" here for better messages on error conditions.(¥Ç¼Ö
+B
+java:S1452“"&Remove usage of generic wildcard type.(Ç ù™üÿÿÿÿ
+X
+java:S1126Æ"AReplace this if-then-else statement by a single return statement.(â•ÖÒ
