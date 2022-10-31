@@ -275,6 +275,9 @@ public class PaymentActivity extends AppCompatActivity implements OnItemChange {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
             case R.id.call:
                 callIntent = new Intent(Intent.ACTION_DIAL);
                 callIntent.setData(Uri.parse("tel:0123456789"));
