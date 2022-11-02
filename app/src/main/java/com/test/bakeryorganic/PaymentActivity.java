@@ -228,7 +228,7 @@ public class PaymentActivity extends AppCompatActivity implements OnItemChange {
     public void onIncDecClick(int pos, String nama, int harga, int gambar, int count) {
         myListHarga.set(pos, harga);
         myListCount.set(pos, count);
-
+        sub = 0;
         for (Integer i : myListHarga) sub += i;
 
         getTotal = 0;
@@ -245,10 +245,10 @@ public class PaymentActivity extends AppCompatActivity implements OnItemChange {
         }
         saldoKembali();
         if (count <= 0) {onDelete(pos);}
-        sub = 0;
     }
 
     public void saldoKembali() {
+        kembali = 0;
         for (Integer i : myListHarga) kembali += i;
 
         if (typeSaldo >= kembali + jumlahOngkir) {
@@ -259,9 +259,9 @@ public class PaymentActivity extends AppCompatActivity implements OnItemChange {
             vkembali.setText("-");
             checkout.setEnabled(false);
         }
-        kembali = 0;
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -272,6 +272,7 @@ public class PaymentActivity extends AppCompatActivity implements OnItemChange {
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

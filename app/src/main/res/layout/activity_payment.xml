@@ -18,15 +18,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingBottom="64dp"
-            android:paddingTop="@dimen/activity_vertical_margin">
+            android:background="@android:color/transparent">
 
             <androidx.recyclerview.widget.RecyclerView
+
+
                 android:id="@+id/idCourseRV"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingTop="8dp"
-                android:paddingBottom="64dp"/>
+                app:stackFromEnd="true"
+                android:paddingBottom="128dp"
+                android:clipToPadding="false"
+                android:background="@android:color/transparent" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -46,15 +46,14 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="16dp"
-                    android:paddingHorizontal="16dp">
+                    android:orientation="vertical">
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/updUser"
                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
                         android:hint="Username"
                         app:boxStrokeColor="@drawable/line_selector"
                         app:startIconDrawable="@drawable/person_outline"
@@ -65,7 +64,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="#F5F5F5"
-                            app:boxBackgroundColor="#F5F5F5"/>
+                            app:boxBackgroundColor="#F5F5F5" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -73,7 +72,9 @@
                         android:id="@+id/updBtn"
                         android:layout_width="match_parent"
                         android:layout_height="36dp"
+                        android:layout_marginHorizontal="16dp"
                         android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
                         android:gravity="center"
                         android:padding="0dp"
                         android:text="Update Username"
@@ -125,15 +126,14 @@
                     android:id="@+id/hide1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="16dp"
-                    android:paddingHorizontal="16dp">
+                    android:orientation="vertical">
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/updCurPass"
                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
                         android:layout_marginVertical="@dimen/activity_vertical_margin"
                         android:hint="Current Password"
                         app:boxStrokeColor="@drawable/line_selector"
@@ -142,11 +142,11 @@
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/updCurPassText"
-                            android:inputType="textPassword"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="#F5F5F5"
-                            app:boxBackgroundColor="#F5F5F5"/>
+                            android:inputType="textPassword"
+                            app:boxBackgroundColor="#F5F5F5" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -162,6 +162,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
                         android:layout_marginVertical="@dimen/activity_vertical_margin"
                         android:hint="New Password"
                         app:boxStrokeColor="@drawable/line_selector"
@@ -170,11 +171,11 @@
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/updNewPassText1"
-                            android:inputType="textPassword"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="#F5F5F5"
-                            app:boxBackgroundColor="#F5F5F5"/>
+                            android:inputType="textPassword"
+                            app:boxBackgroundColor="#F5F5F5" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -183,6 +184,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
                         android:layout_marginVertical="@dimen/activity_vertical_margin"
                         android:hint="Confirm New Password"
                         app:boxStrokeColor="@drawable/line_selector"
@@ -191,11 +193,11 @@
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/updNewPassText2"
-                            android:inputType="textPassword"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="#F5F5F5"
-                            app:boxBackgroundColor="#F5F5F5"/>
+                            android:inputType="textPassword"
+                            app:boxBackgroundColor="#F5F5F5" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -203,8 +205,10 @@
                         android:id="@+id/rstBtn"
                         android:layout_width="match_parent"
                         android:layout_height="36dp"
-                        android:gravity="center"
+                        android:layout_marginHorizontal="16dp"
                         android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:gravity="center"
                         android:padding="0dp"
                         android:text="Reset Password"
                         android:textAllCaps="false"
@@ -252,15 +256,14 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="16dp"
-                    android:paddingHorizontal="16dp">
+                    android:orientation="vertical">
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/dltPass"
                         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
                         android:hint="Confirm Password"
                         app:boxStrokeColor="@drawable/line_selector"
                         app:startIconDrawable="@drawable/lock_closed_outline"
@@ -271,7 +274,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="#F5F5F5"
-                            app:boxBackgroundColor="#F5F5F5"/>
+                            app:boxBackgroundColor="#F5F5F5" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -279,14 +282,16 @@
                         android:id="@+id/dltBtn"
                         android:layout_width="match_parent"
                         android:layout_height="36dp"
+                        android:layout_marginHorizontal="16dp"
                         android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
                         android:gravity="center"
                         android:padding="0dp"
                         android:text="Delete Account"
                         android:textAllCaps="false"
                         android:textColor="@color/white"
                         android:textStyle="bold"
-                        app:backgroundTint= "@android:color/holo_red_light" />
+                        app:backgroundTint="@android:color/holo_red_dark" />
 
 
                 </LinearLayout>

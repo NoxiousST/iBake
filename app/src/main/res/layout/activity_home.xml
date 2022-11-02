@@ -12,19 +12,18 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/itemRV"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="2"
             android:layout_gravity="center_horizontal"
+            android:clipToPadding="false"
             android:foregroundGravity="center_horizontal"
             android:paddingHorizontal="@dimen/activity_horizontal_margin"
-            android:paddingBottom="60dp" />
-
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingBottom="64dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2" />
 
     </androidx.core.widget.NestedScrollView>
 
@@ -38,11 +37,11 @@
             android:layout_width="match_parent"
             android:layout_height="42dp"
             android:layout_gravity="bottom"
-            android:layout_weight="4"
-            android:padding="0dp"
+            android:layout_marginHorizontal="16dp"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+            android:layout_weight="4"
             android:gravity="center"
+            android:padding="0dp"
             android:text="@string/tambah"
             android:textAllCaps="false"
             android:textColor="@color/white"

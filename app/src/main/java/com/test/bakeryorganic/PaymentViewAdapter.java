@@ -1,19 +1,30 @@
 package com.test.bakeryorganic;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.card.MaterialCardView;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.ResourceBundle;
 
 public class PaymentViewAdapter extends RecyclerView.Adapter<PaymentViewAdapter.ViewHolder> {
 
@@ -24,6 +35,8 @@ public class PaymentViewAdapter extends RecyclerView.Adapter<PaymentViewAdapter.
     int incHarga, decHarga, harga;
     int count;
     NumberFormat format = NumberFormat.getCurrencyInstance(locale);
+    boolean first = true;
+    ArrayList<Integer> pos = new ArrayList<>();
 
     public PaymentViewAdapter(ArrayList<RecyclerPayment> recyclerDataArrayList, Context mcontext, OnItemChange listener) {
         this.itemDataArrayList = recyclerDataArrayList;
@@ -38,6 +51,7 @@ public class PaymentViewAdapter extends RecyclerView.Adapter<PaymentViewAdapter.
         return new ViewHolder(view);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
@@ -53,7 +67,7 @@ public class PaymentViewAdapter extends RecyclerView.Adapter<PaymentViewAdapter.
             harga = recyclerData.getHarga();
             count = recyclerData.getItemCount();
 
-            incHarga = harga + (harga/count);
+            incHarga = harga + (harga / count);
             count++;
 
             mCallback.onIncDecClick(position, recyclerData.getTitle(), incHarga, recyclerData.getImgid(), count);
@@ -63,7 +77,7 @@ public class PaymentViewAdapter extends RecyclerView.Adapter<PaymentViewAdapter.
             harga = recyclerData.getHarga();
             count = recyclerData.getItemCount();
 
-            decHarga = harga - (harga/count);
+            decHarga = harga - (harga / count);
             count--;
 
             mCallback.onIncDecClick(position, recyclerData.getTitle(), decHarga, recyclerData.getImgid(), count);
@@ -81,6 +95,7 @@ public class PaymentViewAdapter extends RecyclerView.Adapter<PaymentViewAdapter.
         private final TextView namaPay, hargaPay, itemCount;
         private final ImageView gambarPay;
         private final ImageButton incr, decr;
+        private final MaterialCardView cardView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -91,6 +106,7 @@ public class PaymentViewAdapter extends RecyclerView.Adapter<PaymentViewAdapter.
             incr = itemView.findViewById(R.id.incr);
             decr = itemView.findViewById(R.id.decr);
             itemCount = itemView.findViewById(R.id.itemCount);
+            cardView = itemView.findViewById(R.id.cardView);
         }
     }
 

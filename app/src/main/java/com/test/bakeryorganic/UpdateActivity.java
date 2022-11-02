@@ -213,7 +213,6 @@ public class UpdateActivity extends AppCompatActivity {
                 startActivity(new Intent(getBaseContext(),LoginActivity.class));
                 finish();
                 return true;
-
         }
         return (super.onOptionsItemSelected(item));
     }
