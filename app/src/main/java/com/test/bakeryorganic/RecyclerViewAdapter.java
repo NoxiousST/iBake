@@ -1,8 +1,8 @@
 package com.test.bakeryorganic;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -64,6 +64,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return new RecyclerViewHolder(view);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
 
@@ -99,7 +100,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                         holder.relative.setVisibility(View.VISIBLE);
                         holder.relative.startAnimation(maskin);
                         pos.add(position);
-                        Log.d("ArrayList", pos + " Added, Size : " + pos.size());
 
                         nama = recyclerData.getTitle();
                         harga = recyclerData.getHarga();
@@ -109,7 +109,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
                         new Handler().postDelayed(() -> {
                             pos.remove(0);
-                            Log.d("ArrayList", pos + " Index Removed, Size : " + pos.size());
                         }, 1700);
 
                     }

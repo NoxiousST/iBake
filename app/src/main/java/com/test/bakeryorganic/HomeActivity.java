@@ -263,7 +263,7 @@ public class HomeActivity extends AppCompatActivity implements OnItemClick {
                 startActivity(updIntent);
                 return true;
             case R.id.logout:
-                Preferences.clearLoggedInUser(getBaseContext());
+                tinydb.putInt("login", -1);
                 startActivity(new Intent(getBaseContext(), LoginActivity.class));
                 finish();
                 return true;
