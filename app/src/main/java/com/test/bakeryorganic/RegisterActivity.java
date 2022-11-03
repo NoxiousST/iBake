@@ -1,9 +1,13 @@
 package com.test.bakeryorganic;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,7 +25,7 @@ import java.util.Objects;
 public class RegisterActivity extends AppCompatActivity {
 
     private TextInputLayout mViewUser, mViewPassword, mViewRepassword;
-    TextInputEditText text3;
+    TextInputEditText text1, text2, text3;
     TinyDB tinydb;
     ArrayList<Preferences> pr = new ArrayList<>();
     Intent reg = new Intent("reg");
@@ -39,6 +43,8 @@ public class RegisterActivity extends AppCompatActivity {
         mViewUser = findViewById(R.id.et_emailSignup);
         mViewPassword = findViewById(R.id.et_passwordSignup);
         mViewRepassword = findViewById(R.id.et_passwordSignup2);
+        text1 = findViewById(R.id.text1);
+        text2 = findViewById(R.id.text2);
         text3 = findViewById(R.id.text3);
 
         tinydb = new TinyDB(this);
@@ -52,6 +58,32 @@ public class RegisterActivity extends AppCompatActivity {
         });
         findViewById(R.id.button_signupSignup).setOnClickListener(v -> razia());
         findViewById(R.id.button_signupSignin).setOnClickListener(v -> finish());
+
+
+        text1.addTextChangedListener(new TextWatcher() {
+            @Override public void afterTextChanged(Editable s) {}
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mViewUser.setError(null);
+                mViewUser.setStartIconTintList(ColorStateList.valueOf(Color.rgb(255, 255, 255)));
+            }
+        });
+        text2.addTextChangedListener(new TextWatcher() {
+            @Override public void afterTextChanged(Editable s) {}
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mViewPassword.setError(null);
+                mViewPassword.setStartIconTintList(ColorStateList.valueOf(Color.rgb(255, 255, 255)));
+            }
+        });
+        text3.addTextChangedListener(new TextWatcher() {
+            @Override public void afterTextChanged(Editable s) {}
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mViewRepassword.setError(null);
+                mViewRepassword.setStartIconTintList(ColorStateList.valueOf(Color.rgb(255, 255, 255)));
+            }
+        });
 
     }
 
@@ -75,21 +107,23 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (TextUtils.isEmpty(user)) {
             mViewUser.setError("This field is required");
+            mViewUser.setStartIconTintList(ColorStateList.valueOf(Color.rgb(255, 69, 69)));
             fokus = mViewUser;
             cancel = true;
-        } else if (containsName(pr, user)) {
-            mViewUser.setError("This Username is already exist");
-            fokus = mViewUser;
-            cancel = true;
-        }
-
-        if (TextUtils.isEmpty(password)) {
+        } else if (TextUtils.isEmpty(password)) {
             mViewPassword.setError("This field is required");
+            mViewPassword.setStartIconTintList(ColorStateList.valueOf(Color.rgb(255, 69, 69)));
             fokus = mViewPassword;
             cancel = true;
         } else if (!cekPassword(password, repassword)) {
             mViewRepassword.setError("This password is incorrect");
+            mViewRepassword.setStartIconTintList(ColorStateList.valueOf(Color.rgb(255, 69, 69)));
             fokus = mViewRepassword;
+            cancel = true;
+        } else if (containsName(pr, user)) {
+            mViewUser.setError("This Username is already exist");
+            mViewUser.setStartIconTintList(ColorStateList.valueOf(Color.rgb(255, 69, 69)));
+            fokus = mViewUser;
             cancel = true;
         }
 

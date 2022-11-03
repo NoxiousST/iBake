@@ -2,6 +2,7 @@ package com.test.bakeryorganic;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -44,6 +46,7 @@ public class HomeActivity extends AppCompatActivity implements OnItemClick {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
@@ -97,8 +100,7 @@ public class HomeActivity extends AppCompatActivity implements OnItemClick {
         if (isClear) {
             setClear();
             isClear = false;
-        }
-        else if (!broadcasted) {
+        } else if (!broadcasted) {
             myListNama = tinydb.getListString("mylistnama");
             myListHarga = tinydb.getListInt("mylistharga");
             myListGambar = tinydb.getListInt("mylistgambar");
@@ -148,7 +150,7 @@ public class HomeActivity extends AppCompatActivity implements OnItemClick {
             myListHarga.remove(getPosition);
             myListGambar.remove(getPosition);
             myListCount.remove(getPosition);
-            if(myListNama.isEmpty()) tinydb.putBoolean("isclear", true);
+            if (myListNama.isEmpty()) tinydb.putBoolean("isclear", true);
 
             for (Integer i : myListHarga)
                 totalInt += i;
@@ -168,8 +170,11 @@ public class HomeActivity extends AppCompatActivity implements OnItemClick {
             getTotalHarga = intent.getIntExtra("harga", 0);
             getCount = intent.getIntExtra("count", 0);
 
-            if (myListCount.get(getPosition) > getCount) {totalInt += getTotalHarga/getCount;}
-            else if (myListCount.get(getPosition) < getCount) {totalInt -= getTotalHarga/getCount;}
+            if (myListCount.get(getPosition) > getCount) {
+                totalInt += getTotalHarga / getCount;
+            } else if (myListCount.get(getPosition) < getCount) {
+                totalInt -= getTotalHarga / getCount;
+            }
             myListHarga.set(getPosition, getTotalHarga);
             myListCount.set(getPosition, getCount);
 
@@ -179,23 +184,23 @@ public class HomeActivity extends AppCompatActivity implements OnItemClick {
 
     @Override
     public void onClickImage(String nama, int harga, int gambar, int count) {
-        total.setEnabled(true);
-        totalInt = 0;
+            total.setEnabled(true);
+            totalInt = 0;
 
-        if (!myListNama.contains(nama)) {
-            myListNama.add(nama);
-            myListHarga.add(harga);
-            myListGambar.add(gambar);
-            myListCount.add(1);
-        } else {
-            myListCount.set(myListNama.indexOf(nama), myListCount.get(myListNama.indexOf(nama))+1);
-            myListHarga.set(myListNama.indexOf(nama), harga * myListCount.get(myListNama.indexOf(nama)));
-        }
+            if (!myListNama.contains(nama)) {
+                myListNama.add(nama);
+                myListHarga.add(harga);
+                myListGambar.add(gambar);
+                myListCount.add(1);
+            } else {
+                myListCount.set(myListNama.indexOf(nama), myListCount.get(myListNama.indexOf(nama)) + 1);
+                myListHarga.set(myListNama.indexOf(nama), harga * myListCount.get(myListNama.indexOf(nama)));
+            }
 
-        broadcasted = false;
-        tinydb.putBoolean("broadcast", false);
-        tinydb.putBoolean("isclear", false);
-        retrieveTotal();
+            broadcasted = false;
+            tinydb.putBoolean("broadcast", false);
+            tinydb.putBoolean("isclear", false);
+            retrieveTotal();
     }
 
     public void retrieveTotal() {
@@ -270,7 +275,6 @@ public class HomeActivity extends AppCompatActivity implements OnItemClick {
         }
         return (super.onOptionsItemSelected(item));
     }
-
 
 
 }

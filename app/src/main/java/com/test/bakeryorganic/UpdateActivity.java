@@ -2,19 +2,27 @@ package com.test.bakeryorganic;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.ImageButton;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -33,6 +41,12 @@ public class UpdateActivity extends AppCompatActivity {
     TinyDB tinydb;
     ArrayList<Preferences> pr = new ArrayList<>();
     int position;
+    View customAlertDialogView;
+    MaterialAlertDialogBuilder materialAlertDialogBuilder;
+    Button btnHapus;
+    ImageButton btnCancel;
+    AlertDialog alertDialog;
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -83,6 +97,7 @@ public class UpdateActivity extends AppCompatActivity {
                 fokus.requestFocus();
             }else{
                 pr.get(position).setUsername(user);
+                tinydb.putListPreferences("data", pr);
                 Snackbar.make(view, "Username berhasil diupdate", Snackbar.LENGTH_LONG)
                         .setAction("OK", v ->{})
                         .show();
@@ -123,6 +138,7 @@ public class UpdateActivity extends AppCompatActivity {
                 fokus.requestFocus();
             }else{
                 pr.get(position).setPassword(new_password);
+                tinydb.putListPreferences("data", pr);
                 Snackbar.make(view, "Password berhasil diupdate", Snackbar.LENGTH_LONG)
                         .setAction("OK", v ->{})
                         .show();
@@ -150,13 +166,23 @@ public class UpdateActivity extends AppCompatActivity {
 
             if (cancel) fokus.requestFocus();
             else {
-                pr.remove(position);
-                tinydb.putListPreferences("data", pr);
-                tinydb.putInt("login", -1);
-                startActivity(new Intent(getBaseContext(),LoginActivity.class));
-                Snackbar.make(view, "Akun berhasil dihapus", Snackbar.LENGTH_LONG)
-                        .setAction("OK", v ->{})
-                        .show();
+
+                alertDialog = new MaterialAlertDialogBuilder(this, R.style.MaterialAlertDialog_Rounded).create();
+                customAlertDialogView = LayoutInflater.from(view.getContext()).inflate(R.layout.confirm_delete, null, false);
+                alertDialog.setView(customAlertDialogView);
+                alertDialog.show();
+
+                btnHapus = customAlertDialogView.findViewById(R.id.hapus);
+                btnCancel = customAlertDialogView.findViewById(R.id.cancel);
+
+                btnCancel.setOnClickListener(v -> alertDialog.dismiss());
+                btnHapus.setOnClickListener(v -> {
+                    pr.remove(position);
+                    tinydb.putListPreferences("data", pr);
+                    tinydb.putInt("login", -1);
+                    startActivity(new Intent(getBaseContext(),LoginActivity.class));
+                    tinydb.putBoolean("deleted", true);
+                });
             }
         });
     }

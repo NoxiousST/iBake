@@ -4,18 +4,27 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.widget.LinearLayout;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -28,7 +37,10 @@ public class LoginActivity extends AppCompatActivity {
     TextInputEditText text1, text2;
     TinyDB tinydb;
     ArrayList<Preferences> pr = new ArrayList<>();
-    Preferences prx;
+    MaterialCardView error;
+    Snackbar snackbar;
+    View snackbarLayout;
+    LinearLayout.LayoutParams lp;
     int position;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -44,9 +56,28 @@ public class LoginActivity extends AppCompatActivity {
         mViewPassword = findViewById(R.id.et_passwordSignin);
         text1 = findViewById(R.id.text1);
         text2 = findViewById(R.id.text2);
+        error = findViewById(R.id.error);
 
         tinydb = new TinyDB(this);
 
+        text1.addTextChangedListener(new TextWatcher() {
+            @Override public void afterTextChanged(Editable s) {}
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mViewUser.setError(null);
+                error.setVisibility(View.GONE);
+                mViewUser.setStartIconTintList(ColorStateList.valueOf(Color.rgb(255, 255, 255)));
+            }
+        });
+        text2.addTextChangedListener(new TextWatcher() {
+            @Override public void afterTextChanged(Editable s) {}
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mViewPassword.setError(null);
+                error.setVisibility(View.GONE);
+                mViewPassword.setStartIconTintList(ColorStateList.valueOf(Color.rgb(255, 255, 255)));
+            }
+        });
 
         text2.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL) {
@@ -72,6 +103,21 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (tinydb.getBoolean("deleted")) {
+            snackbar = Snackbar.make(getWindow().getDecorView().getRootView(), "Akun berhasil dihapus", Snackbar.LENGTH_LONG);
+            snackbarLayout = snackbar.getView();
+            lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            lp.setMargins(32, Resources.getSystem().getDisplayMetrics().heightPixels - 64, 32, 0);
+
+            snackbarLayout.setLayoutParams(lp);
+            snackbar.show();
+            tinydb.putBoolean("deleted", false);
+        }
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void razia() {
         position = 0;
@@ -86,16 +132,22 @@ public class LoginActivity extends AppCompatActivity {
 
         if (TextUtils.isEmpty(user)) {
             mViewUser.setError("This field is required");
+            mViewUser.setStartIconTintList(ColorStateList.valueOf(Color.rgb(255, 69, 69)));
             fokus = mViewUser;
+            cancel = true;
+        } else if (TextUtils.isEmpty(password)) {
+            mViewPassword.setError("This field is required");
+            mViewPassword.setStartIconTintList(ColorStateList.valueOf(Color.rgb(255, 69, 69)));
+            fokus = mViewPassword;
             cancel = true;
         } else if (!cekUser(user, password)) {
-            mViewUser.setError("Username or password is incorrect");
-            fokus = mViewUser;
-            cancel = true;
-        }
-
-        if (TextUtils.isEmpty(password)) {
-            mViewPassword.setError("This field is required");
+            mViewUser.setError("this");
+            mViewPassword.setError("this");
+            mViewUser.setStartIconTintList(ColorStateList.valueOf(Color.rgb(255, 69, 69)));
+            mViewPassword.setStartIconTintList(ColorStateList.valueOf(Color.rgb(255, 69, 69)));
+            if (mViewUser.getChildCount() == 2) {mViewUser.getChildAt(1).setVisibility(View.GONE);}
+            if (mViewPassword.getChildCount() == 2) {mViewPassword.getChildAt(1).setVisibility(View.GONE);}
+            error.setVisibility(View.VISIBLE);
             fokus = mViewPassword;
             cancel = true;
         }
@@ -124,6 +176,13 @@ public class LoginActivity extends AppCompatActivity {
 
     public Integer getId() {
         return tinydb.getInt("login");
+    }
+
+    public void deleted(View view) {
+        if (tinydb.getBoolean("deleted")) {
+            Snackbar.make(view, "Akun berhasil dihapus", Snackbar.LENGTH_LONG).show();
+            tinydb.putBoolean("deleted", false);
+        }
     }
 
     private final BroadcastReceiver pMessageReceiver = new BroadcastReceiver() {

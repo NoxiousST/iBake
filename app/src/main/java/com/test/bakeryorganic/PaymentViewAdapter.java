@@ -3,6 +3,7 @@ package com.test.bakeryorganic;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -35,8 +36,6 @@ public class PaymentViewAdapter extends RecyclerView.Adapter<PaymentViewAdapter.
     int incHarga, decHarga, harga;
     int count;
     NumberFormat format = NumberFormat.getCurrencyInstance(locale);
-    boolean first = true;
-    ArrayList<Integer> pos = new ArrayList<>();
 
     public PaymentViewAdapter(ArrayList<RecyclerPayment> recyclerDataArrayList, Context mcontext, OnItemChange listener) {
         this.itemDataArrayList = recyclerDataArrayList;
@@ -63,25 +62,35 @@ public class PaymentViewAdapter extends RecyclerView.Adapter<PaymentViewAdapter.
         holder.gambarPay.setImageResource(recyclerData.getImgid());
         holder.itemCount.setText(String.valueOf(recyclerData.getItemCount()));
 
+
         holder.incr.setOnClickListener(view -> {
-            harga = recyclerData.getHarga();
-            count = recyclerData.getItemCount();
+            try {
+                harga = recyclerData.getHarga();
+                count = recyclerData.getItemCount();
 
-            incHarga = harga + (harga / count);
-            count++;
+                incHarga = harga + (harga / count);
+                count++;
 
-            mCallback.onIncDecClick(position, recyclerData.getTitle(), incHarga, recyclerData.getImgid(), count);
+                mCallback.onIncDecClick(position, recyclerData.getTitle(), incHarga, recyclerData.getImgid(), count);
+            } catch (Exception e) {
+                Log.d("Err", "" + e);
+            }
         });
 
         holder.decr.setOnClickListener(view -> {
-            harga = recyclerData.getHarga();
-            count = recyclerData.getItemCount();
+            try {
+                harga = recyclerData.getHarga();
+                count = recyclerData.getItemCount();
 
-            decHarga = harga - (harga / count);
-            count--;
+                decHarga = harga - (harga / count);
+                count--;
 
-            mCallback.onIncDecClick(position, recyclerData.getTitle(), decHarga, recyclerData.getImgid(), count);
+                mCallback.onIncDecClick(position, recyclerData.getTitle(), decHarga, recyclerData.getImgid(), count);
+            } catch (Exception e) {
+                Log.d("Err", "" + e);
+            }
         });
+
 
     }
 
@@ -95,7 +104,6 @@ public class PaymentViewAdapter extends RecyclerView.Adapter<PaymentViewAdapter.
         private final TextView namaPay, hargaPay, itemCount;
         private final ImageView gambarPay;
         private final ImageButton incr, decr;
-        private final MaterialCardView cardView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -106,7 +114,6 @@ public class PaymentViewAdapter extends RecyclerView.Adapter<PaymentViewAdapter.
             incr = itemView.findViewById(R.id.incr);
             decr = itemView.findViewById(R.id.decr);
             itemCount = itemView.findViewById(R.id.itemCount);
-            cardView = itemView.findViewById(R.id.cardView);
         }
     }
 

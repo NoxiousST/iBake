@@ -15,8 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:gravity="center"
         android:layout_marginBottom="64dp"
+        android:gravity="center"
         android:orientation="vertical">
 
         <ImageView
@@ -37,6 +37,9 @@
             android:singleLine="true"
             android:textColorHint="@color/white"
             app:boxStrokeColor="@drawable/line_selector"
+            app:boxStrokeErrorColor="@android:color/holo_red_light"
+            app:errorIconTint="@android:color/holo_red_light"
+            app:errorTextColor="@android:color/holo_red_light"
             app:hintTextColor="@color/white"
             app:startIconDrawable="@drawable/person_outline"
             app:startIconTint="@color/white">
@@ -63,7 +66,12 @@
             android:singleLine="true"
             android:textColorHint="@color/white"
             app:boxStrokeColor="@drawable/line_selector"
+            app:boxStrokeErrorColor="@android:color/holo_red_light"
+            app:errorIconTint="@android:color/holo_red_light"
+            app:errorTextColor="@android:color/holo_red_light"
             app:hintTextColor="@color/white"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/white"
             app:startIconDrawable="@drawable/lock_closed_outline"
             app:startIconTint="@color/white">
 
@@ -91,7 +99,12 @@
             android:textColorHint="@color/white"
             app:boxBackgroundColor="@android:color/transparent"
             app:boxStrokeColor="@drawable/line_selector"
+            app:boxStrokeErrorColor="@android:color/holo_red_light"
+            app:errorIconTint="@android:color/holo_red_light"
+            app:errorTextColor="@android:color/holo_red_light"
             app:hintTextColor="@color/white"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/white"
             app:startIconDrawable="@drawable/lock_closed_outline"
             app:startIconTint="@color/white">
 
@@ -135,10 +148,11 @@
             <Button
                 android:id="@+id/button_signupSignin"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="42dp"
-                android:text="Sign In !"
+                android:layout_width="72dp"
+                android:layout_height="36dp"
+                android:text="Sign In!"
                 android:textAllCaps="false"
+                android:padding="0dp"
                 android:textColor="#00D5FF" />
         </LinearLayout>
 

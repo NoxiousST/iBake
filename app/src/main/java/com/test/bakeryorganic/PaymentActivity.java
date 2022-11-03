@@ -17,6 +17,7 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -116,11 +117,14 @@ public class PaymentActivity extends AppCompatActivity implements OnItemChange {
                     long clickDuration = Calendar.getInstance().getTimeInMillis() - startClickTime;
                     if (clickDuration < MAX_CLICK_DURATION) {
                         startRevealActivity(event.getX() + tx, event.getY() + ty);
+
+                        kembali = 0;
                         for (Integer i : myListHarga)
                             kembali += i;
                         tinydb.putDouble("saldokembali", typeSaldo - (kembali + jumlahOngkir));
+                        Log.d("kembali", "" + (typeSaldo - (kembali + jumlahOngkir)));
                         tinydb.putBoolean("ischeckout", true);
-                        kembali = 0;
+
                         new Handler().postDelayed(() -> {
                             recyclerPaymentArrayList.clear();
                             LocalBroadcastManager.getInstance(this).sendBroadcast(clr);
@@ -179,8 +183,12 @@ public class PaymentActivity extends AppCompatActivity implements OnItemChange {
         super.onResume();
         isChecked = tinydb.getBoolean("ischeckout");
 
-        if (isChecked) {setKembali = tinydb.getDouble("saldokembali");isChecked = false;}
-        else {setKembali = tinydb.getDouble("typesaldo");}
+        if (isChecked) {
+            setKembali = tinydb.getDouble("saldokembali");
+            isChecked = false;
+        } else {
+            setKembali = tinydb.getDouble("typesaldo");
+        }
 
         saldo.setText(format.format(setKembali));
     }
@@ -201,50 +209,60 @@ public class PaymentActivity extends AppCompatActivity implements OnItemChange {
 
     @Override
     public void onDelete(int pos) {
-        saldoKembali();
-        myListNama.remove(pos);
-        myListHarga.remove(pos);
-        myListGambar.remove(pos);
-        myListCount.remove(pos);
-        recyclerPaymentArrayList.remove(pos);
-        adapter.notifyItemRemoved(pos);
-        adapter.notifyItemRangeChanged(pos, recyclerPaymentArrayList.size());
-        dlt.putExtra("pos", pos);
+        try {
+            saldoKembali();
+            myListNama.remove(pos);
+            myListHarga.remove(pos);
+            myListGambar.remove(pos);
+            myListCount.remove(pos);
+            recyclerPaymentArrayList.remove(pos);
+            adapter.notifyItemRemoved(pos);
+            adapter.notifyItemRangeChanged(pos, recyclerPaymentArrayList.size());
+            dlt.putExtra("pos", pos);
 
-        if (recyclerPaymentArrayList.isEmpty()) {
-            format.setMaximumFractionDigits(0);
+            if (recyclerPaymentArrayList.isEmpty()) {
+                format.setMaximumFractionDigits(0);
 
-            total.setText(format.format(zero));
-            ongkir.setText(format.format(zero));
-            fullTotal.setText(format.format(zero));
-            vkembali.setText("-");
-            checkout.setEnabled(false);
-            dlt.putExtra("isempty", true);
-        } else dlt.putExtra("isempty", false);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(dlt);
+                total.setText(format.format(zero));
+                ongkir.setText(format.format(zero));
+                fullTotal.setText(format.format(zero));
+                vkembali.setText("-");
+                checkout.setEnabled(false);
+                dlt.putExtra("isempty", true);
+            } else dlt.putExtra("isempty", false);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(dlt);
+        } catch (Exception e) {
+            Log.d("Err", "" + e);
+        }
     }
 
     @Override
     public void onIncDecClick(int pos, String nama, int harga, int gambar, int count) {
-        myListHarga.set(pos, harga);
-        myListCount.set(pos, count);
-        sub = 0;
-        for (Integer i : myListHarga) sub += i;
+        try {
+            myListHarga.set(pos, harga);
+            myListCount.set(pos, count);
+            sub = 0;
+            for (Integer i : myListHarga) sub += i;
 
-        getTotal = 0;
-        total.setText(format.format(sub));
-        fullTotal.setText(format.format((long) sub + jumlahOngkir));
+            getTotal = 0;
+            total.setText(format.format(sub));
+            fullTotal.setText(format.format((long) sub + jumlahOngkir));
 
-        if (count > 0) {
-            inc.putExtra("pos", pos);
-            inc.putExtra("harga", harga);
-            inc.putExtra("count", count);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(inc);
-            recyclerPaymentArrayList.set(pos, new RecyclerPayment(nama, harga, gambar, count));
-            adapter.notifyItemChanged(pos);
+            if (count > 0) {
+                inc.putExtra("pos", pos);
+                inc.putExtra("harga", harga);
+                inc.putExtra("count", count);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(inc);
+                recyclerPaymentArrayList.set(pos, new RecyclerPayment(nama, harga, gambar, count));
+                adapter.notifyItemChanged(pos);
+            }
+            saldoKembali();
+            if (count <= 0) {
+                onDelete(pos);
+            }
+        } catch (Exception e) {
+            Log.d("Err", "" + e);
         }
-        saldoKembali();
-        if (count <= 0) {onDelete(pos);}
     }
 
     public void saldoKembali() {
@@ -254,8 +272,7 @@ public class PaymentActivity extends AppCompatActivity implements OnItemChange {
         if (typeSaldo >= kembali + jumlahOngkir) {
             vkembali.setText(format.format(typeSaldo - (kembali + jumlahOngkir)));
             checkout.setEnabled(true);
-        }
-        else {
+        } else {
             vkembali.setText("-");
             checkout.setEnabled(false);
         }

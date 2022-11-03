@@ -152,10 +152,10 @@
 
                     <com.google.android.material.divider.MaterialDivider
                         android:layout_width="match_parent"
-                        android:layout_height="2dp"
+                        android:layout_height="1dp"
                         android:layout_marginVertical="@dimen/activity_vertical_margin"
-                        app:dividerInsetEnd="8dp"
-                        app:dividerInsetStart="8dp" />
+                        app:dividerInsetEnd="16dp"
+                        app:dividerInsetStart="16dp" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/updNewPass1"
