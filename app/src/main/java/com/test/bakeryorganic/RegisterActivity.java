@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Patterns;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,6 +22,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -104,7 +106,6 @@ public class RegisterActivity extends AppCompatActivity {
         repassword = String.valueOf(Objects.requireNonNull(mViewRepassword.getEditText()).getText());
         user = String.valueOf(Objects.requireNonNull(mViewUser.getEditText()).getText());
         password = String.valueOf(Objects.requireNonNull(mViewPassword.getEditText()).getText());
-
         if (TextUtils.isEmpty(user)) {
             mViewUser.setError("This field is required");
             mViewUser.setStartIconTintList(ColorStateList.valueOf(Color.rgb(255, 69, 69)));
@@ -136,6 +137,7 @@ public class RegisterActivity extends AppCompatActivity {
             reg.putExtra("pass", password);
             LocalBroadcastManager.getInstance(this).sendBroadcast(reg);
             finish();
+
         }
     }
 
